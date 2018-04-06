@@ -1,13 +1,20 @@
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.util.Scanner;
 import java.io.File;
-import java.io.IOException;
-import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
 import java.security.MessageDigest;
-import java.util.*;
+import java.util.InputMismatchException;
+import java.io.IOException;
+import java.util.NoSuchElementException;
+import java.lang.StackOverflowError;
+import java.math.BigInteger;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.*;
 public class ToolCollection{
     public static void main(String[] args)
     {
@@ -407,10 +414,18 @@ class Tools implements Runnable, KeyListener{
                 timeDiff=1000;
             System.out.print(" H/s: "+(ct/(timeDiff/1000)));
             System.out.print((char)13);
-          
+            if ((timeDiff/1000)/60>=1)
+            {
+                ct=0;
+                startTime = System.currentTimeMillis();
+            }
+
         }
         if(!stop)
-            System.out.println("Valid Hash: "+ current);
+        {
+            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            System.out.println("Valid Hash: "+ current+ " Target: 0x"+target);
+        }
 
     }
     public void keyPressed(KeyEvent e) {
