@@ -51,10 +51,8 @@ class Tools implements Runnable, KeyListener{
     private static String salt2;
     private static String hash1;
     private static String finalHash;
-    private static String[] saltHashArr = new String[8];
     public static String[] stopwords = {"exit","Exit","break","Break","stop","Stop","end","End","terminate","Terminate"};
     public static String[] helpwords = {"help", "Help", "functions", "Functions"};
-    private static String saltHash="";
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()`~-_=+[{]};:',./<>?\"|";
     private static boolean gpugrlc = false;
     private static boolean cpugrlc = false;
@@ -77,7 +75,7 @@ class Tools implements Runnable, KeyListener{
     }
     public static void hashInit()
     {
-        salt2 = salt2+sha256(randomAlphaNumeric(8192));
+        salt2 = salt2+sha256(randomAlphaNumeric(128));
         salt2 = sha256(salt2);
         salt2 = salt2.substring(0, 15);
     }
@@ -359,35 +357,20 @@ class Tools implements Runnable, KeyListener{
         return newSalt;
     }
     private static String getHash() {
-        saltHashArr[0]=salt2.substring(5, 13);
         salt = sha256(getBase());
         salt = salt.substring(0, 15);
-        saltHashArr[1]=salt.substring(5, 13);
         hash1 = sha256(salt2+salt+getBase()+salt2);
         salt = getNewSalt(salt);
-        saltHashArr[2]=salt.substring(5, 13);
         salt2 = getNewSalt(salt2);
-        saltHashArr[3]=salt2.substring(5, 13);
         finalHash = sha256(salt2+salt+hash1+sha256(getBase()+salt+salt2));
         salt = getNewSalt(salt);
-        saltHashArr[4]=salt.substring(5, 13);
         salt2 = getNewSalt(salt2);
-        saltHashArr[5]=salt2.substring(5, 13);
-        salt = getNewSalt(salt);
-        saltHashArr[6]=salt.substring(5, 13);
-        salt2 = getNewSalt(salt2);
-        saltHashArr[7]=salt2.substring(5, 13);
-        for(String i : saltHashArr)
-            saltHash+=i;
-        if(saltHash.length()!=finalHash.length())
-            return null;
-        finalHash = sha256(sha256(salt2+finalHash+salt+hash1+salt2)+sha256(saltHash));
-        saltHash = new String("");
+        finalHash = sha256(sha256(salt2+finalHash+salt+hash1+salt2));
         return finalHash;
     }
     public static String getBase()
     {
-        return randomAlphaNumeric(512);
+        return randomAlphaNumeric(128);
     }
     public static void mineBlock() throws InterruptedException, IOException
     {
