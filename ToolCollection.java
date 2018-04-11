@@ -378,6 +378,7 @@ class Tools implements Runnable, KeyListener{
         int diff = sc.nextInt();
         int mRange = diff + (int) (Math.random() * (64 - diff));
         int ct = 0;
+        long prevTime;
         if(diff>64)
             diff=64;
         hashInit();
@@ -385,18 +386,28 @@ class Tools implements Runnable, KeyListener{
         String current = getHash();
         long startTime = System.currentTimeMillis();
         long timeDiff = 0;
+        prevTime = timeDiff; 
+        boolean refreshScreen=false;
         new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
         while(!(current.contains(target))&&!stop)
-        {
+        {        
             ct++;
+          if((timeDiff-prevTime)>128)
+          {
+            refreshScreen = true;
             System.out.print("Target: 0x"+target+" Result: "+current+" Diff: "+literalHash.dec2hex(new BigInteger(diff+"")));
+          }  
             hashInit();
             current=getHash();
             timeDiff = (new Date()).getTime() - startTime;
             if ((timeDiff/1000)<1)
                 timeDiff=1000;
+          if((refreshScreen))
+          {
             System.out.print(" H/s: "+(ct/(timeDiff/1000)));
             System.out.print((char)13);
+            refreshScreen = false;
+          }
             if ((timeDiff/1000)/60>=2)
             {
                 ct=0;
