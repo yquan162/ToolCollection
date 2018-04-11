@@ -75,7 +75,7 @@ class Tools implements Runnable, KeyListener{
     }
     public static void hashInit()
     {
-        salt2 = salt2+sha256(randomAlphaNumeric(128));
+        salt2 = salt2+sha256(randomAlphaNumeric(64));
         salt2 = sha256(salt2);
         salt2 = salt2.substring(0, 15);
     }
@@ -350,7 +350,7 @@ class Tools implements Runnable, KeyListener{
         return builder.toString();
     }
     private static String getNewSalt(String oldSalt) {
-        String randomSalt = sha256(""+randomAlphaNumeric(16384));
+        String randomSalt = sha256(""+randomAlphaNumeric(256));
         randomSalt = randomSalt.substring(0, 15);
         String newSalt = sha256(oldSalt+randomSalt);
         newSalt = newSalt.substring(0, 15);
@@ -370,7 +370,7 @@ class Tools implements Runnable, KeyListener{
     }
     public static String getBase()
     {
-        return randomAlphaNumeric(128);
+        return randomAlphaNumeric(64);
     }
     public static void mineBlock() throws InterruptedException, IOException
     {
@@ -397,7 +397,7 @@ class Tools implements Runnable, KeyListener{
                 timeDiff=1000;
             System.out.print(" H/s: "+(ct/(timeDiff/1000)));
             System.out.print((char)13);
-            if ((timeDiff/1000)/60>=1)
+            if ((timeDiff/1000)/60>=2)
             {
                 ct=0;
                 startTime = System.currentTimeMillis();
