@@ -388,6 +388,14 @@ class Tools implements Runnable, KeyListener{
         String current = getHash();
         long startTime = System.currentTimeMillis();
         long timeDiff = 0;
+        long hashesps = 0;
+        long kh, mh, gh, th, ph, eh;
+        kh=1000;
+        mh=kh*1000;
+        gh=mh*1000;
+        th=gh*1000;
+        ph=th*1000;
+        eh=ph*1000;
         prevTime = timeDiff; 
         boolean refreshScreen=false;
         new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
@@ -396,6 +404,7 @@ class Tools implements Runnable, KeyListener{
             ct++;
           if((timeDiff-prevTime)>256)
           {
+            hashesps = (ct/(timeDiff/1000));
             refreshScreen = true;
             System.out.print("Target: 0x"+target+" Result: "+current+" Diff: "+literalHash.dec2hex(new BigInteger(diff+"")));
           }  
@@ -406,9 +415,29 @@ class Tools implements Runnable, KeyListener{
                 timeDiff=1000;
           if((refreshScreen))
           {
-           if((ct/(timeDiff/1000))>3000)
+           if(hashesps>kh&&!(hashesps>mh))
            {
-             System.out.print(" KH/s: "+df.format(((double)ct/(double)(timeDiff/1000))/1000));
+             System.out.print(" KH/s: "+df.format(((double)ct/(double)(timeDiff/1000))/kh));
+           }
+           else if(hashesps>mh&&!(hashesps>gh))
+           {
+             System.out.print(" MH/s: "+df.format(((double)ct/(double)(timeDiff/1000))/mh));
+           }
+           else if(hashesps>gh&&(hashesps>th))
+           {
+             System.out.print(" GH/s: "+df.format(((double)ct/(double)(timeDiff/1000))/gh));
+           }
+           else if(hashesps>th&&!(hashesps>ph))
+           {
+             System.out.print(" TH/s: "+df.format(((double)ct/(double)(timeDiff/1000))/th));
+           }
+           else if(hashesps>ph&&!(hashesps>eh))
+           {
+             System.out.print(" PH/s: "+df.format(((double)ct/(double)(timeDiff/1000))/ph));
+           }
+           else if(hashesps>eh)
+           {
+             System.out.print(" EH/s: "+df.format(((double)ct/(double)(timeDiff/1000))/eh));
            }
            else
             System.out.print(" H/s: "+(ct/(timeDiff/1000)));
@@ -419,8 +448,7 @@ class Tools implements Runnable, KeyListener{
             {
                 ct=0;
                 startTime = System.currentTimeMillis();
-            }
-
+            } 
         }
         if(!stop)
         {
