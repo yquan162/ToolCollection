@@ -394,7 +394,7 @@ class Tools implements Runnable, KeyListener{
         while(!(current.contains(target))&&!stop)
         {        
             ct++;
-          if((timeDiff-prevTime)>128)
+          if((timeDiff-prevTime)>256)
           {
             refreshScreen = true;
             System.out.print("Target: 0x"+target+" Result: "+current+" Diff: "+literalHash.dec2hex(new BigInteger(diff+"")));
