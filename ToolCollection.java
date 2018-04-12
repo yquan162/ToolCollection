@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.text.DecimalFormat;
 import java.util.*;
 public class ToolCollection{
     public static void main(String[] args)
@@ -374,6 +375,7 @@ class Tools implements Runnable, KeyListener{
     }
     public static void mineBlock() throws InterruptedException, IOException
     {
+        DecimalFormat df = new DecimalFormat("#.###");
         Scanner sc = new Scanner(System.in);
         int diff = sc.nextInt();
         int mRange = diff + (int) (Math.random() * (64 - diff));
@@ -404,6 +406,11 @@ class Tools implements Runnable, KeyListener{
                 timeDiff=1000;
           if((refreshScreen))
           {
+           if((ct/(timeDiff/1000))>3000)
+           {
+             System.out.print(" KH/s: "+df.format(((double)ct/(double)(timeDiff/1000))/1000));
+           }
+           else
             System.out.print(" H/s: "+(ct/(timeDiff/1000)));
             System.out.print((char)13);
             refreshScreen = false;
