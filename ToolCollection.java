@@ -387,6 +387,7 @@ class Tools implements Runnable, KeyListener{
         String target = getHash().substring(mRange-diff, mRange);
         String current = getHash();
         long startTime = System.currentTimeMillis();
+        long callTime = startTime;
         long timeDiff = 0;
         long hashesps = 0;
         long kh, mh, gh, th, ph, eh;
@@ -453,7 +454,8 @@ class Tools implements Runnable, KeyListener{
         if(!stop)
         {
             new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-            System.out.println("Valid Hash: "+ current+ " Target: 0x"+target);
+            System.out.println("Valid Hash: "+ current+ " Target: 0x"+target+" Diff: "+literalHash.dec2hex(new BigInteger(diff+""))+" Time until solution in minutes: "+df.format((((double)System.currentTimeMillis()-(double)callTime)/(double)1000)/(double)60));
+            //(.64*(Diff*0.1))*TimeSpent = CLM Owed
         }
 
     }
