@@ -455,7 +455,13 @@ class Tools implements Runnable, KeyListener{
         {
             new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             System.out.println("Valid Hash: "+ current+ " Target: 0x"+target+" Diff: "+literalHash.dec2hex(new BigInteger(diff+""))+" Time until solution in minutes: "+df.format((((double)System.currentTimeMillis()-(double)callTime)/(double)1000)/(double)60));
-            //(.64*(Diff*0.1))*TimeSpent = CLM Owed
+            //.64(1/64((Diff*0.1)*ElapsedTime)) = CLM Owed
+            /*
+            final double outerconst, innerconst;
+            outerconst=.64;
+            innerconst=1/64;
+            System.out.println("CLM Owed: "+ outerconst*(innerconst*((diff*0.1)*((((double)System.currentTimeMillis()-(double)callTime)/(double)1000)/(double)60)))+"\n");
+            */
         }
 
     }
