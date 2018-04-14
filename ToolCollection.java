@@ -397,9 +397,8 @@ class Tools implements Runnable, KeyListener{
         th=gh*1000;
         ph=th*1000;
         eh=ph*1000;
-        final double outerconst, innerconst;
+        final double outerconst;
         outerconst=.64;
-        innerconst=1/64;
         prevTime = timeDiff; 
         boolean refreshScreen=false;
         new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
@@ -459,7 +458,7 @@ class Tools implements Runnable, KeyListener{
             double timeMins = ((((double)System.currentTimeMillis()-(double)callTime)/(double)1000)/(double)60);
             new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             System.out.println("Valid Hash: "+ current+ " Target: 0x"+target+" Diff: "+literalHash.dec2hex(new BigInteger(diff+""))+" Time until solution in minutes: "+df.format(timeMins));
-            System.out.println("CLM Owed: "+ outerconst*(innerconst*((diff*0.1)*((((double)System.currentTimeMillis()-(double)callTime)/(double)1000)/(double)60)))+"\n");
+            System.out.println("CLM Owed: "+ outerconst*((1/64)*((diff*0.1)*timeMins))+"\n");
             System.out.println("Payment Token: "+sha256(sha256(diff+"")+sha256(timeMins+""))+" Do not lose this or your CLM cannot be rewarded.");
             //.64(1/64((Diff*0.1)*ElapsedTime)) = CLM Owed
             /*
