@@ -274,7 +274,11 @@ class Tools implements Runnable, KeyListener{
                     String bin2hex = sc.nextLine();
                     System.out.println(literalHash.bin2hex(bin2hex));
                 }
-                if(Arrays.asList(stopwords).contains(action)||Arrays.asList(helpwords).contains(action)||action.equals("leetify")||action.equals("getrandomstring")||action.equals("mineblock")||action.equals("throwexception")||action.equals("getrandomhash")||action.equals("getepoch")||action.equals("dec2hex")||action.equals("bin2dec")||action.equals("bin2hex")||(action.equals("clear")||action.equals("hex2dec")||action.equals("Clear")||action.equals("dec2bin")||action.equals("hex2bin")||action.equals("directhash")||action.equals("secretfunctions")||action.equals("gpugrlc")||action.equals("cpugrlc")||action.equals("getstate")||action.equals("setfalse")||action.equals("bibbafy")||action.equals("discordbibbafy")||action.equals("base2dec")||action.equals("base2hex")||action.equals("base2bin")||action.equals("base2base")||action.equals("dec2base")||action.equals("hex2base")||action.equals("bin2base"))||action.equals("getcredits"))
+              else if(action.equals("checktoken"))
+                {
+                System.out.println(checkToken());
+                }
+                if(Arrays.asList(stopwords).contains(action)||Arrays.asList(helpwords).contains(action)||action.equals("leetify")||action.equals("getrandomstring")||action.equals("checktoken")||action.equals("mineblock")||action.equals("throwexception")||action.equals("getrandomhash")||action.equals("getepoch")||action.equals("dec2hex")||action.equals("bin2dec")||action.equals("bin2hex")||(action.equals("clear")||action.equals("hex2dec")||action.equals("Clear")||action.equals("dec2bin")||action.equals("hex2bin")||action.equals("directhash")||action.equals("secretfunctions")||action.equals("gpugrlc")||action.equals("cpugrlc")||action.equals("getstate")||action.equals("setfalse")||action.equals("bibbafy")||action.equals("discordbibbafy")||action.equals("base2dec")||action.equals("base2hex")||action.equals("base2bin")||action.equals("base2base")||action.equals("dec2base")||action.equals("hex2base")||action.equals("bin2base"))||action.equals("getcredits"))
                 {
                     if(Arrays.asList(helpwords).contains(action))
                     {
@@ -307,6 +311,7 @@ class Tools implements Runnable, KeyListener{
                         System.out.println("discordbibbafy-optimized for discord :wink:");
                         System.out.println("getcredits-gets the contributors or sources for this program");
                         System.out.println("mineblock-kinda mines a block using hashes");
+                        System.out.println("checktoken-clears payment of clm");
                     }
                 }
                 else
@@ -460,12 +465,23 @@ class Tools implements Runnable, KeyListener{
             new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             System.out.println("Valid Hash: "+ current+ " Target: 0x"+target+" Diff: "+literalHash.dec2hex(new BigInteger(diff+""))+" Time until solution in minutes: "+df.format(timeMins));
             System.out.println("CLM Owed: "+ outerconst*(((double)1/(double)64)*((diff*0.1)*((((double)System.currentTimeMillis()-(double)callTime)/(double)1000)/(double)60)))+"\n");
-            System.out.println("Payment Token: "+sha256(sha256(diff+"")+sha256(timeMins+""))+" Do not lose this or your CLM cannot be rewarded.");
+            System.out.println("Payment Token: "+sha256(sha256(diff+"")+sha256(df.format(timeMins)+""))+" Do not lose this or your CLM cannot be rewarded.");
             //.64(1/64((Diff*0.1)*ElapsedTime)) = CLM Owed
             /*
             */
         }
 
+    }
+    public static boolean checkToken()
+    {
+      Scanner sc = new Scanner(System.in);
+      int diff = sc.nextInt();
+      double time = sc.nextDouble();
+      String token = sc.nextLine();
+      token = sc.nextLine();
+      if(token.length()!=64)
+        return false;
+      return token.equals(sha256(sha256(diff+"")+sha256(time+"")));
     }
     public void keyPressed(KeyEvent e) {
         boolean s = false;
