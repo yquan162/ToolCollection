@@ -1,5 +1,7 @@
 import java.util.Scanner;
 import java.io.File;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
@@ -274,11 +276,15 @@ class Tools implements Runnable, KeyListener{
                     String bin2hex = sc.nextLine();
                     System.out.println(literalHash.bin2hex(bin2hex));
                 }
-              else if(action.equals("checktoken"))
+                else if(action.equals("checktoken"))
                 {
                 System.out.println(checkToken());
                 }
-                if(Arrays.asList(stopwords).contains(action)||Arrays.asList(helpwords).contains(action)||action.equals("leetify")||action.equals("getrandomstring")||action.equals("checktoken")||action.equals("mineblock")||action.equals("throwexception")||action.equals("getrandomhash")||action.equals("getepoch")||action.equals("dec2hex")||action.equals("bin2dec")||action.equals("bin2hex")||(action.equals("clear")||action.equals("hex2dec")||action.equals("Clear")||action.equals("dec2bin")||action.equals("hex2bin")||action.equals("directhash")||action.equals("secretfunctions")||action.equals("gpugrlc")||action.equals("cpugrlc")||action.equals("getstate")||action.equals("setfalse")||action.equals("bibbafy")||action.equals("discordbibbafy")||action.equals("base2dec")||action.equals("base2hex")||action.equals("base2bin")||action.equals("base2base")||action.equals("dec2base")||action.equals("hex2base")||action.equals("bin2base"))||action.equals("getcredits"))
+                else if(action.equals("getpath"))
+                {
+                    System.out.println("Working Directory = " + System.getProperty("user.dir"));
+                }
+                if(Arrays.asList(stopwords).contains(action)||Arrays.asList(helpwords).contains(action)||action.equals("getpath")||action.equals("leetify")||action.equals("getrandomstring")||action.equals("checktoken")||action.equals("mineblock")||action.equals("throwexception")||action.equals("getrandomhash")||action.equals("getepoch")||action.equals("dec2hex")||action.equals("bin2dec")||action.equals("bin2hex")||(action.equals("clear")||action.equals("hex2dec")||action.equals("Clear")||action.equals("dec2bin")||action.equals("hex2bin")||action.equals("directhash")||action.equals("secretfunctions")||action.equals("gpugrlc")||action.equals("cpugrlc")||action.equals("getstate")||action.equals("setfalse")||action.equals("bibbafy")||action.equals("discordbibbafy")||action.equals("base2dec")||action.equals("base2hex")||action.equals("base2bin")||action.equals("base2base")||action.equals("dec2base")||action.equals("hex2base")||action.equals("bin2base"))||action.equals("getcredits"))
                 {
                     if(Arrays.asList(helpwords).contains(action))
                     {
@@ -312,6 +318,7 @@ class Tools implements Runnable, KeyListener{
                         System.out.println("getcredits-gets the contributors or sources for this program");
                         System.out.println("mineblock-kinda mines a block using hashes");
                         System.out.println("checktoken-clears payment of clm");
+                        System.out.println("getpath-displays the path where the program was initialized");
                     }
                 }
                 else
@@ -380,6 +387,8 @@ class Tools implements Runnable, KeyListener{
     }
     public static void mineBlock() throws InterruptedException, IOException
     {
+        String placeholder = System.getProperty("user.dir");
+        String path = placeholder.replaceAll("/", "\\");
         DecimalFormat df = new DecimalFormat("#.###");
         Scanner sc = new Scanner(System.in);
         int diff = sc.nextInt();
@@ -466,6 +475,21 @@ class Tools implements Runnable, KeyListener{
             //(Diff/64(Diff*ElapsedTime)) = CLM Owed
             /*
             */
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(path+"\\pendingtx.txt", true))) {
+                bw.write(current+ " "+target+" "+literalHash.dec2hex(new BigInteger(diff+""))+" "+df.format(timeMins));
+                bw.newLine();
+                bw.write("CLM Owed: "+ (((double)diff/(double)64)*(diff*((((double)System.currentTimeMillis()-(double)callTime)/(double)1000)/(double)60)))+"\n");
+                bw.newLine();
+                bw.write("Payment Token: "+sha256(sha256(diff+"")+sha256(df.format(timeMins)+"")));
+                bw.newLine();
+                bw.write("NEVER lose your payment token, you cannot redeem your reward without it.");
+                bw.newLine();
+                bw.newLine();
+                // no need to close it.
+                //bw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
     }
