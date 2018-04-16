@@ -471,7 +471,7 @@ class Tools implements Runnable, KeyListener{
             new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             System.out.println("Valid Hash: "+ current+ " Target: 0x"+target+" Diff: "+literalHash.dec2hex(new BigInteger(diff+""))+" Time until solution in minutes: "+df.format(timeMins));
             System.out.println("CLM Owed: "+ (((double)diff/(double)64)*(diff*((((double)System.currentTimeMillis()-(double)callTime)/(double)1000)/(double)60)))+"\n");
-            System.out.println("Payment Token: "+sha256(current.substring(0,33)+sha256(diff+"")+sha256(df.format(timeMins)+"")+current.substring(33))+" Do not lose this or your CLM cannot be rewarded.");
+            System.out.println("Payment Token: "+sha256(target).substring(0, 33)+sha256(current.substring(0,33)+sha256(diff+"")+sha256(df.format(timeMins)+"")+current.substring(33))+sha256(target).substring(33)+" Do not lose this or your CLM cannot be rewarded.\n");
             //(Diff/64(Diff*ElapsedTime)) = CLM Owed
             /*
             */
@@ -480,7 +480,7 @@ class Tools implements Runnable, KeyListener{
                 bw.newLine();
                 bw.write("CLM Owed: "+ (((double)diff/(double)64)*(diff*((((double)System.currentTimeMillis()-(double)callTime)/(double)1000)/(double)60)))+"\n");
                 bw.newLine();
-                bw.write("Payment Token: "+sha256(current.substring(0,33)+sha256(diff+"")+sha256(df.format(timeMins)+"")+current.substring(33)));
+                bw.write("Payment Token: "+sha256(target).substring(0, 33)+sha256(current.substring(0,33)+sha256(diff+"")+sha256(df.format(timeMins)+"")+current.substring(33))+sha256(target).substring(33));
                 bw.newLine();
                 bw.write("NEVER lose your payment token, you cannot redeem your reward without it.");
                 bw.newLine();
@@ -495,17 +495,21 @@ class Tools implements Runnable, KeyListener{
     }
     public static boolean checkToken()
     {
+      System.out.println("<validHash><diff><target><time><token>");
       Scanner sc = new Scanner(System.in);
       String validHash = sc.nextLine();
       if(validHash.length()<64)
         return false;
       int diff = sc.nextInt();
+      String target = sc.nextLine();
+      if(target.length()<diff)
+      	return false;
       double time = sc.nextDouble();
       String token = sc.nextLine();
       token = sc.nextLine();
       if(token.length()!=64)
         return false;
-      return token.equals(sha256(validHash.substring(0,33)+sha256(diff+"")+sha256(time+"")+validHash.substring(33)));
+      return token.equals(sha256(target).substring(0, 33)+sha256(validHash.substring(0,33)+sha256(diff+"")+sha256(time+"")+validHash.substring(33))+sha256(target).substring(33));
     }
     public void keyPressed(KeyEvent e) {
         boolean s = false;
