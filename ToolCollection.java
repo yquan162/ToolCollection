@@ -316,8 +316,8 @@ class Tools implements Runnable, KeyListener{
                         System.out.println("bibbafy-adds them hard Bs to your text");
                         System.out.println("discordbibbafy-optimized for discord :wink:");
                         System.out.println("getcredits-gets the contributors or sources for this program");
-                        System.out.println("mineblock-kinda mines a block using hashes");
-                        System.out.println("checktoken-clears payment of clm");
+                        System.out.println("mineblock-finds a valid sha256 hash given int diff<65");
+                        System.out.println("checktoken-clears payment of clm given <validHash><diff><time><token> in order");
                         System.out.println("getpath-displays the path where the program was initialized");
                     }
                 }
@@ -471,7 +471,7 @@ class Tools implements Runnable, KeyListener{
             new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             System.out.println("Valid Hash: "+ current+ " Target: 0x"+target+" Diff: "+literalHash.dec2hex(new BigInteger(diff+""))+" Time until solution in minutes: "+df.format(timeMins));
             System.out.println("CLM Owed: "+ (((double)diff/(double)64)*(diff*((((double)System.currentTimeMillis()-(double)callTime)/(double)1000)/(double)60)))+"\n");
-            System.out.println("Payment Token: "+sha256(sha256(diff+"")+sha256(df.format(timeMins)+""))+" Do not lose this or your CLM cannot be rewarded.");
+            System.out.println("Payment Token: "+sha256(current.substring(0,33)+sha256(diff+"")+sha256(df.format(timeMins)+"")+current.substring(33))+" Do not lose this or your CLM cannot be rewarded.");
             //(Diff/64(Diff*ElapsedTime)) = CLM Owed
             /*
             */
@@ -480,7 +480,7 @@ class Tools implements Runnable, KeyListener{
                 bw.newLine();
                 bw.write("CLM Owed: "+ (((double)diff/(double)64)*(diff*((((double)System.currentTimeMillis()-(double)callTime)/(double)1000)/(double)60)))+"\n");
                 bw.newLine();
-                bw.write("Payment Token: "+sha256(sha256(diff+"")+sha256(df.format(timeMins)+"")));
+                bw.write("Payment Token: "+sha256(current.substring(0,33)+sha256(diff+"")+sha256(df.format(timeMins)+"")+current.substring(33)));
                 bw.newLine();
                 bw.write("NEVER lose your payment token, you cannot redeem your reward without it.");
                 bw.newLine();
@@ -496,13 +496,16 @@ class Tools implements Runnable, KeyListener{
     public static boolean checkToken()
     {
       Scanner sc = new Scanner(System.in);
+      String validHash = sc.nextLine();
+      if(validHash.length()<64)
+        return false;
       int diff = sc.nextInt();
       double time = sc.nextDouble();
       String token = sc.nextLine();
       token = sc.nextLine();
       if(token.length()!=64)
         return false;
-      return token.equals(sha256(sha256(diff+"")+sha256(time+"")));
+      return token.equals(sha256(validHash.substring(0,33)+sha256(diff+"")+sha256(time+"")+validHash.substring(33)));
     }
     public void keyPressed(KeyEvent e) {
         boolean s = false;
