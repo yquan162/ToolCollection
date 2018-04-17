@@ -51,6 +51,8 @@ class Tools implements Runnable, KeyListener {
     private static String finalHash;
     private static boolean gpugrlc = false;
     private static boolean cpugrlc = false;
+    public static String placeholder = System.getProperty("user.dir");
+    public static String path = placeholder.replaceAll("/", "\\");
     private static CommieAI ai = new CommieAI();
 
     public Tools() {
@@ -312,8 +314,6 @@ class Tools implements Runnable, KeyListener {
     }
 
     public static void mineBlock() throws InterruptedException, IOException {
-        String placeholder = System.getProperty("user.dir");
-        String path = placeholder.replaceAll("/", "\\");
         DecimalFormat df = new DecimalFormat("#.###");
         Scanner sc = new Scanner(System.in);
         int diff = sc.nextInt();
@@ -384,13 +384,10 @@ class Tools implements Runnable, KeyListener {
             /*
              */
             try (BufferedWriter bw = new BufferedWriter(new FileWriter(path + "\\pendingtx.txt", true))) {
-                bw.write(current + " " + target + " " + literalHash.dec2hex(new BigInteger(diff + "")) + " " + df.format(timeMins));
+                bw.write(current + " " + target + " " + literalHash.dec2hex(new BigInteger(diff + "")) + " " + df.format(timeMins)+" ");
+                bw.write(sha256(target).substring(0, 33)+sha256(current.substring(0, 33) + sha256(diff + "") + sha256(df.format(timeMins) + "") + current.substring(33))+sha256(target).substring(33));
                 bw.newLine();
                 bw.write("CLM Owed: " + (((double) diff / (double) 64) * (diff * ((((double) System.currentTimeMillis() - (double) callTime) / (double) 1000) / (double) 60))) + "\n");
-                bw.newLine();
-                bw.write("Payment Token: " +sha256(target).substring(0, 33)+sha256(current.substring(0, 33) + sha256(diff + "") + sha256(df.format(timeMins) + "") + current.substring(33))+sha256(target).substring(33));
-                bw.newLine();
-                bw.write("NEVER lose your payment token, you cannot redeem your reward without it.");
                 bw.newLine();
                 bw.newLine();
                 // no need to close it.
@@ -427,7 +424,18 @@ class Tools implements Runnable, KeyListener {
           System.out.println("Invalid target given diff");
             return false;
         }
-          return token.equals(sha256(target).substring(0, 33)+sha256(validHash.substring(0, 33) + sha256(diff + "") + sha256(time + "") + validHash.substring(33))+sha256(target).substring(33));
+        
+          if(token.equals(sha256(target).substring(0, 33)+sha256(validHash.substring(0, 33) + sha256(diff + "") + sha256(time + "") + validHash.substring(33))+sha256(target).substring(33))){
+             try (BufferedWriter bw1 = new BufferedWriter(new FileWriter(path + "\\processedtx.txt", true))) {
+             	bw1.write(validHash+" "+token);
+             	bw1.newLine();
+             	return true;
+             }
+             catch (IOException e) {
+                e.printStackTrace();
+            }
+          }
+          	return false;
     }
 
     @Override
