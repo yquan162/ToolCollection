@@ -18,276 +18,191 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.text.DecimalFormat;
 import java.util.*;
-public class ToolCollection{
-    public static void main(String[] args)
-    {
-        try{
+
+public class ToolCollection {
+    public static void main(String[] args) {
+        try {
             Tools tool = new Tools();
             Recovery recovery = new Recovery();
             recovery.runAndRecover(tool);
-        }
-        catch(InputMismatchException e)
-        {
+        } catch (InputMismatchException e) {
             System.out.println("InputMismatchException in main()");
-        }
-        catch(NoSuchElementException e)
-        {
+        } catch (NoSuchElementException e) {
             System.out.println("NoSuchElementException in main()");
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             System.out.println("Exception in main()");
-        }
-        catch(StackOverflowError e)
-        {
+        } catch (StackOverflowError e) {
             System.out.println("StackOverflowError in main()");
-        }
-        catch(Error e)
-        {
+        } catch (Error e) {
             System.out.println("Error in main()");
         }
         main(args);
     }
 }
-class Tools implements Runnable, KeyListener{
+
+class Tools implements Runnable, KeyListener {
+    private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()`~-_=+[{]};:',./<>?\"|";
+    public static String[] stopwords = {"exit", "Exit", "break", "Break", "stop", "Stop", "end", "End", "terminate", "Terminate"};
+    public static String[] helpwords = {"help", "Help", "functions", "Functions"};
+    public static boolean stop = false;
     private static String salt;
     private static String salt2;
     private static String hash1;
     private static String finalHash;
-    public static String[] stopwords = {"exit","Exit","break","Break","stop","Stop","end","End","terminate","Terminate"};
-    public static String[] helpwords = {"help", "Help", "functions", "Functions"};
-    private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()`~-_=+[{]};:',./<>?\"|";
     private static boolean gpugrlc = false;
     private static boolean cpugrlc = false;
     private static CommieAI ai = new CommieAI();
-    public static boolean stop = false;
-    public Tools()
-    {
+
+    public Tools() {
     }
-    @Override
-    public void run()
-    {
-        try {
-            ASCIIDL.ASCII("YTool v0.1", false);
-            Execute();
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-    public static void hashInit()
-    {
-        salt2 = salt2+sha256(randomAlphaNumeric(64));
+
+    public static void hashInit() {
+        salt2 = salt2 + sha256(randomAlphaNumeric(64));
         salt2 = sha256(salt2);
         salt2 = salt2.substring(0, 15);
     }
-    public static void Execute() throws Exception
-    {
-        int x = -1; int y = -1;
-        while(true)
-        {
+
+    public static void Execute() throws Exception {
+        int x = -1;
+        int y = -1;
+        while (true) {
             x = -1;
-            while(x == -1 && y == -1)
-            {
+            while (x == -1 && y == -1) {
                 Scanner sc = new Scanner(System.in);
                 String action = sc.nextLine();
                 action = action.toLowerCase();
                 String[] aiwords = action.split(" ");
-                for(String keyword:aiwords)
-                {
+                for (String keyword : aiwords) {
                     ai.listen(keyword);
                 }
-                if((action.equals("clear")||action.equals("Clear")))
-                {
-                    new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor(); ASCIIDL.ASCII("YTool v0.1", false);
-                }
-                else if(action.equals("getrandomhash"))
-                {
-                    if(!(action.equals(null)))
-                    {
+                if ((action.equals("clear") || action.equals("Clear"))) {
+                    new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+                    ASCIIDL.ASCII("YTool v0.1", false);
+                } else if (action.equals("getrandomhash")) {
+                    if (!(action.equals(null))) {
                         salt2 = salt2 + action;
                     }
                     hashInit();
                     System.out.println(getHash());
-                }
-                else if(action.equals("mineblock"))
+                } else if (action.equals("mineblock"))
                     mineBlock();
-                else if(action.equals("secretfunctions"))
-                {
-                    gpugrlc=true;
-                    cpugrlc=true;
-                }
-                else if(action.equals("getcredits"))
-                {
+                else if (action.equals("secretfunctions")) {
+                    gpugrlc = true;
+                    cpugrlc = true;
+                } else if (action.equals("getcredits")) {
                     System.out.println("Program by Yicheng Quan, MethodsDL and subclasses by Damian Lall");
-                }
-                else if(action.equals("base2dec"))
-                {
+                } else if (action.equals("base2dec")) {
                     String base2dec = sc.nextLine();
                     int base = sc.nextInt();
                     System.out.println(literalHash.base2dec(base2dec, base));
-                }
-                else if(action.equals("base2hex"))
-                {
+                } else if (action.equals("base2hex")) {
                     String base2hex = sc.nextLine();
                     int base = sc.nextInt();
                     System.out.println(literalHash.base2hex(base2hex, base));
-                }
-                else if(action.equals("base2bin"))
-                {
+                } else if (action.equals("base2bin")) {
                     String base2bin = sc.nextLine();
                     int base = sc.nextInt();
                     System.out.println(literalHash.base2bin(base2bin, base));
-                }
-                else if(action.equals("base2base"))
-                {
+                } else if (action.equals("base2base")) {
                     String base2base = sc.nextLine();
                     int base = sc.nextInt();
                     int desiredbase = sc.nextInt();
                     System.out.println(literalHash.base2base(base2base, base, desiredbase));
-                }
-                else if(action.equals("dec2base"))
-                {
+                } else if (action.equals("dec2base")) {
                     BigInteger dec2base = new BigInteger(sc.nextLine());
                     int base = sc.nextInt();
                     System.out.println(literalHash.dec2base(dec2base, base));
-                }
-                else if(action.equals("hex2base"))
-                {
+                } else if (action.equals("hex2base")) {
                     String hex2base = sc.nextLine();
                     int base = sc.nextInt();
                     System.out.println(literalHash.hex2base(hex2base, base));
-                }
-                else if(action.equals("bin2base"))
-                {
+                } else if (action.equals("bin2base")) {
                     String bin2base = sc.nextLine();
                     int base = sc.nextInt();
                     System.out.println(literalHash.bin2base(bin2base, base));
-                }
-                else if(action.equals("gpugrlc")&&gpugrlc==true)
-                {
+                } else if (action.equals("gpugrlc") && gpugrlc == true) {
                     literalHash.gpugrlc();
-                    gpugrlc=false;
-                    if(gpugrlc==false)
+                    gpugrlc = false;
+                    if (gpugrlc == false)
                         System.out.println("this.state=0");
                     else
                         System.out.println("this.state=1");
-                    if(cpugrlc==false)
+                    if (cpugrlc == false)
                         System.out.println("cpu.state=0");
                     else
                         System.out.println("cpu.state=1");
 
-                }
-                else if(action.equals("bibbafy"))
-                {
+                } else if (action.equals("bibbafy")) {
                     String bibbafy = sc.nextLine();
                     System.out.println(literalHash.bibbafy(bibbafy));
-                }
-                else if(action.equals("discordbibbafy"))
-                {
+                } else if (action.equals("discordbibbafy")) {
                     String discordbibbafy = sc.nextLine();
                     System.out.println(literalHash.discordbibbafy(discordbibbafy));
-                }
-                else if(action.equals("cpugrlc")&&cpugrlc==true)
-                {
+                } else if (action.equals("cpugrlc") && cpugrlc == true) {
                     literalHash.cpugrlc();
-                    cpugrlc=false;
-                    if(gpugrlc==false)
+                    cpugrlc = false;
+                    if (gpugrlc == false)
                         System.out.println("gpu.state=0");
                     else
                         System.out.println("gpu.state=1");
-                    if(cpugrlc==false)
+                    if (cpugrlc == false)
                         System.out.println("this.state=0");
                     else
                         System.out.println("this.state=1");
-                }
-                else if(action.equals("getstate"))
-                {
-                    if(gpugrlc==false)
+                } else if (action.equals("getstate")) {
+                    if (gpugrlc == false)
                         System.out.println("gpu.state=0");
                     else
                         System.out.println("gpu.state=1");
-                    if(cpugrlc==false)
+                    if (cpugrlc == false)
                         System.out.println("cpu.state=0");
                     else
                         System.out.println("cpu.state=1");
-                }
-                else if(action.equals("setfalse"))
-                {
-                    cpugrlc=false;gpugrlc=false;
-                }
-                else if(action.equals("getepoch"))
-                {
+                } else if (action.equals("setfalse")) {
+                    cpugrlc = false;
+                    gpugrlc = false;
+                } else if (action.equals("getepoch")) {
                     System.out.println(System.currentTimeMillis());
-                }
-                else if(action.equals("leetify"))
-                {
+                } else if (action.equals("leetify")) {
                     String leetify = sc.nextLine();
                     System.out.println(literalHash.leetify(leetify));
-                }
-                else if(action.equals("getrandomstring"))
-                {
+                } else if (action.equals("getrandomstring")) {
                     int size = sc.nextInt();
                     System.out.println(randomAlphaNumeric(size));
-                }
-                else if(action.equals("throwexception"))
-                {
+                } else if (action.equals("throwexception")) {
                     throw new TestException("This was thrown at request for debug purposes, the auto recovery system should kick in.\nYou should be able to still type commands if the program did not encounter any unknown errors.\nTL:DR DON'T FREAK OUT THE PROGRAM RECOVERED, IT IS STILL RUNNING.");
-                }
-                else if(action.equals("dec2bin"))
-                {
+                } else if (action.equals("dec2bin")) {
                     BigInteger dec2bin = new BigInteger(sc.nextLine());
                     System.out.println(literalHash.dec2bin(dec2bin));
-                }
-                else if(action.equals("hex2bin"))
-                {
+                } else if (action.equals("hex2bin")) {
                     String hex2bin = sc.nextLine();
                     System.out.println(literalHash.hex2bin(hex2bin));
-                }
-                else if(action.equals("hex2dec"))
-                {
+                } else if (action.equals("hex2dec")) {
                     String hex2dec = sc.nextLine();
                     System.out.println(literalHash.hex2dec(hex2dec));
-                }
-                else if(action.equals("directhash"))
-                {
+                } else if (action.equals("directhash")) {
                     String literalhash = sc.nextLine();
                     System.out.println(literalHash.hash(literalhash));
-                }
-                else if(action.equals("dec2hex"))
-                {
+                } else if (action.equals("dec2hex")) {
                     try {
                         BigInteger dec2hex = new BigInteger(sc.nextLine());
                         System.out.println(literalHash.dec2hex(dec2hex));
-                    }
-                    catch(InputMismatchException e)
-                    {
+                    } catch (InputMismatchException e) {
                         System.out.println("Unrecognizable input");
                     }
-                }
-                else if(action.equals("bin2dec"))
-                {
+                } else if (action.equals("bin2dec")) {
                     String bin2dec = sc.nextLine();
                     System.out.println(literalHash.bin2dec(bin2dec));
-                }
-                else if(action.equals("bin2hex"))
-                {
+                } else if (action.equals("bin2hex")) {
                     String bin2hex = sc.nextLine();
                     System.out.println(literalHash.bin2hex(bin2hex));
-                }
-                else if(action.equals("checktoken"))
-                {
-                System.out.println(checkToken());
-                }
-                else if(action.equals("getpath"))
-                {
+                } else if (action.equals("checktoken")) {
+                    System.out.println(checkToken());
+                } else if (action.equals("getpath")) {
                     System.out.println("Working Directory = " + System.getProperty("user.dir"));
                 }
-                if(Arrays.asList(stopwords).contains(action)||Arrays.asList(helpwords).contains(action)||action.equals("getpath")||action.equals("leetify")||action.equals("getrandomstring")||action.equals("checktoken")||action.equals("mineblock")||action.equals("throwexception")||action.equals("getrandomhash")||action.equals("getepoch")||action.equals("dec2hex")||action.equals("bin2dec")||action.equals("bin2hex")||(action.equals("clear")||action.equals("hex2dec")||action.equals("Clear")||action.equals("dec2bin")||action.equals("hex2bin")||action.equals("directhash")||action.equals("secretfunctions")||action.equals("gpugrlc")||action.equals("cpugrlc")||action.equals("getstate")||action.equals("setfalse")||action.equals("bibbafy")||action.equals("discordbibbafy")||action.equals("base2dec")||action.equals("base2hex")||action.equals("base2bin")||action.equals("base2base")||action.equals("dec2base")||action.equals("hex2base")||action.equals("bin2base"))||action.equals("getcredits"))
-                {
-                    if(Arrays.asList(helpwords).contains(action))
-                    {
+                if (Arrays.asList(stopwords).contains(action) || Arrays.asList(helpwords).contains(action) || action.equals("getpath") || action.equals("leetify") || action.equals("getrandomstring") || action.equals("checktoken") || action.equals("mineblock") || action.equals("throwexception") || action.equals("getrandomhash") || action.equals("getepoch") || action.equals("dec2hex") || action.equals("bin2dec") || action.equals("bin2hex") || (action.equals("clear") || action.equals("hex2dec") || action.equals("Clear") || action.equals("dec2bin") || action.equals("hex2bin") || action.equals("directhash") || action.equals("secretfunctions") || action.equals("gpugrlc") || action.equals("cpugrlc") || action.equals("getstate") || action.equals("setfalse") || action.equals("bibbafy") || action.equals("discordbibbafy") || action.equals("base2dec") || action.equals("base2hex") || action.equals("base2bin") || action.equals("base2base") || action.equals("dec2base") || action.equals("hex2base") || action.equals("bin2base")) || action.equals("getcredits")) {
+                    if (Arrays.asList(helpwords).contains(action)) {
                         System.out.println("help-help");
                         System.out.println("functions-help");
                         System.out.println("break-stops program");
@@ -317,76 +232,86 @@ class Tools implements Runnable, KeyListener{
                         System.out.println("discordbibbafy-optimized for discord :wink:");
                         System.out.println("getcredits-gets the contributors or sources for this program");
                         System.out.println("mineblock-finds a valid sha256 hash given int diff<65");
-                        System.out.println("checktoken-clears payment of clm given <validHash><diff><time><token> in order");
+                        System.out.println("checktoken-clears payment of clm given <validHash><target><diff><target><time><token> in order");
                         System.out.println("getpath-displays the path where the program was initialized");
                     }
-                }
-                else
+                } else
                     System.out.println("This command does not seem to exist, to see a list of commands, type 'help'.");
-                if(Arrays.asList(stopwords).contains(action))
-                {
+                if (Arrays.asList(stopwords).contains(action)) {
                     System.out.println("Are you sure? [Y/N]");
                     char stop = sc.nextLine().charAt(0);
-                    switch(stop)
-                    {
-                        case 'y': case 'Y': System.out.println("Closing Program..."); Thread.sleep(512); System.exit(0); break;
-                        case 'n': case 'N': x = -1; break;
-                        default:continue;
+                    switch (stop) {
+                        case 'y':
+                        case 'Y':
+                            System.out.println("Closing Program...");
+                            Thread.sleep(512);
+                            System.exit(0);
+                            break;
+                        case 'n':
+                        case 'N':
+                            x = -1;
+                            break;
+                        default:
+                            continue;
                     }
                 }
             }
         }
     }
+
     public static String sha256(String base) {
-        try{
+        try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(base.getBytes("UTF-8"));
             StringBuffer hexString = new StringBuffer();
 
             for (int i = 0; i < hash.length; i++) {
                 String hex = Integer.toHexString(0xff & hash[i]);
-                if(hex.length() == 1) hexString.append('0');
+                if (hex.length() == 1) hexString.append('0');
                 hexString.append(hex);
             }
 
             return hexString.toString();
-        } catch(Exception ex){
+        } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
+
     public static String randomAlphaNumeric(int count) {
         StringBuilder builder = new StringBuilder();
         while (count-- != 0) {
-            int character = (int)(Math.random()*ALPHA_NUMERIC_STRING.length());
+            int character = (int) (Math.random() * ALPHA_NUMERIC_STRING.length());
             builder.append(ALPHA_NUMERIC_STRING.charAt(character));
         }
         return builder.toString();
     }
+
     private static String getNewSalt(String oldSalt) {
-        String randomSalt = sha256(""+randomAlphaNumeric(256));
+        String randomSalt = sha256("" + randomAlphaNumeric(256));
         randomSalt = randomSalt.substring(0, 15);
-        String newSalt = sha256(oldSalt+randomSalt);
+        String newSalt = sha256(oldSalt + randomSalt);
         newSalt = newSalt.substring(0, 15);
         return newSalt;
     }
+
     private static String getHash() {
         salt = sha256(getBase());
         salt = salt.substring(0, 15);
-        hash1 = sha256(salt2+salt+getBase()+salt2);
+        hash1 = sha256(salt2 + salt + getBase() + salt2);
         salt = getNewSalt(salt);
         salt2 = getNewSalt(salt2);
-        finalHash = sha256(salt2+salt+hash1+sha256(getBase()+salt+salt2));
+        finalHash = sha256(salt2 + salt + hash1 + sha256(getBase() + salt + salt2));
         salt = getNewSalt(salt);
         salt2 = getNewSalt(salt2);
-        finalHash = sha256(sha256(salt2+finalHash+salt+hash1+salt2));
+        finalHash = sha256(sha256(salt2 + finalHash + salt + hash1 + salt2));
         return finalHash;
     }
-    public static String getBase()
-    {
+
+    public static String getBase() {
         return randomAlphaNumeric(64);
     }
-    public static void mineBlock() throws InterruptedException, IOException
-    {
+
+    public static void mineBlock() throws InterruptedException, IOException {
         String placeholder = System.getProperty("user.dir");
         String path = placeholder.replaceAll("/", "\\");
         DecimalFormat df = new DecimalFormat("#.###");
@@ -395,92 +320,75 @@ class Tools implements Runnable, KeyListener{
         int mRange = diff + (int) (Math.random() * (64 - diff));
         int ct = 0;
         long prevTime;
-        if(diff>64)
-            diff=64;
+        if (diff > 64)
+            diff = 64;
         hashInit();
-        String target = getHash().substring(mRange-diff, mRange);
+        String target = getHash().substring(mRange - diff, mRange);
         String current = getHash();
         long startTime = System.currentTimeMillis();
         long callTime = startTime;
         long timeDiff = 0;
         long hashesps = 0;
         long kh, mh, gh, th, ph, eh;
-        kh=1000;
-        mh=kh*1000;
-        gh=mh*1000;
-        th=gh*1000;
-        ph=th*1000;
-        eh=ph*1000;
-        prevTime = timeDiff; 
-        boolean refreshScreen=false;
+        kh = 1000;
+        mh = kh * 1000;
+        gh = mh * 1000;
+        th = gh * 1000;
+        ph = th * 1000;
+        eh = ph * 1000;
+        prevTime = timeDiff;
+        boolean refreshScreen = false;
         new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-        while(!(current.contains(target))&&!stop)
-        {        
+        while (!(current.contains(target)) && !stop) {
             ct++;
-          if((timeDiff-prevTime)>256)
-          {
-            hashesps = (ct/(timeDiff/1000));
-            refreshScreen = true;
-            System.out.print("Target: 0x"+target+" Result: "+current+" Diff: "+literalHash.dec2hex(new BigInteger(diff+"")));
-          }  
+            if ((timeDiff - prevTime) > 256) {
+                hashesps = (ct / (timeDiff / 1000));
+                refreshScreen = true;
+                System.out.print("Target: 0x" + target + " Result: " + current + " Diff: " + literalHash.dec2hex(new BigInteger(diff + "")));
+            }
             hashInit();
-            current=getHash();
+            current = getHash();
             timeDiff = (new Date()).getTime() - startTime;
-            if ((timeDiff/1000)<1)
-                timeDiff=1000;
-          if((refreshScreen))
-          {
-           if(hashesps>kh&&!(hashesps>mh))
-           {
-             System.out.print(" KH/s: "+df.format(((double)ct/(double)(timeDiff/1000))/kh));
-           }
-           else if(hashesps>mh&&!(hashesps>gh))
-           {
-             System.out.print(" MH/s: "+df.format(((double)ct/(double)(timeDiff/1000))/mh));
-           }
-           else if(hashesps>gh&&(hashesps>th))
-           {
-             System.out.print(" GH/s: "+df.format(((double)ct/(double)(timeDiff/1000))/gh));
-           }
-           else if(hashesps>th&&!(hashesps>ph))
-           {
-             System.out.print(" TH/s: "+df.format(((double)ct/(double)(timeDiff/1000))/th));
-           }
-           else if(hashesps>ph&&!(hashesps>eh))
-           {
-             System.out.print(" PH/s: "+df.format(((double)ct/(double)(timeDiff/1000))/ph));
-           }
-           else if(hashesps>eh)
-           {
-             System.out.print(" EH/s: "+df.format(((double)ct/(double)(timeDiff/1000))/eh));
-           }
-           else
-            System.out.print(" H/s: "+(ct/(timeDiff/1000)));
-            System.out.print((char)13);
-            refreshScreen = false;
-          }
-            if ((timeDiff/1000)/60>=2)
-            {
-                ct=0;
+            if ((timeDiff / 1000) < 1)
+                timeDiff = 1000;
+            if ((refreshScreen)) {
+                if (hashesps > kh && !(hashesps > mh)) {
+                    System.out.print(" KH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / kh));
+                } else if (hashesps > mh && !(hashesps > gh)) {
+                    System.out.print(" MH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / mh));
+                } else if (hashesps > gh && (hashesps > th)) {
+                    System.out.print(" GH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / gh));
+                } else if (hashesps > th && !(hashesps > ph)) {
+                    System.out.print(" TH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / th));
+                } else if (hashesps > ph && !(hashesps > eh)) {
+                    System.out.print(" PH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / ph));
+                } else if (hashesps > eh) {
+                    System.out.print(" EH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / eh));
+                } else
+                    System.out.print(" H/s: " + (ct / (timeDiff / 1000)));
+                System.out.print((char) 13);
+                refreshScreen = false;
+            }
+            if ((timeDiff / 1000) / 60 >= 2) {
+                ct = 0;
                 startTime = System.currentTimeMillis();
-            } 
+            }
         }
-        if(!stop)
-        {
-            double timeMins = ((((double)System.currentTimeMillis()-(double)callTime)/(double)1000)/(double)60);
+        if (!stop) {
+            double timeMins = ((((double) System.currentTimeMillis() - (double) callTime) / (double) 1000) / (double) 60);
             new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-            System.out.println("Valid Hash: "+ current+ " Target: 0x"+target+" Diff: "+literalHash.dec2hex(new BigInteger(diff+""))+" Time until solution in minutes: "+df.format(timeMins));
-            System.out.println("CLM Owed: "+ (((double)diff/(double)64)*(diff*((((double)System.currentTimeMillis()-(double)callTime)/(double)1000)/(double)60)))+"\n");
-            System.out.println("Payment Token: "+sha256(target).substring(0, 33)+sha256(current.substring(0,33)+sha256(diff+"")+sha256(df.format(timeMins)+"")+current.substring(33))+sha256(target).substring(33)+" Do not lose this or your CLM cannot be rewarded.\n");
+            System.out.println("Valid Hash: " + current + " Target: 0x" + target + " Diff: " + literalHash.dec2hex(new BigInteger(diff + "")) + " Time until solution in minutes: " + df.format(timeMins));
+            System.out.println("CLM Owed: " + (((double) diff / (double) 64) * (diff * ((((double) System.currentTimeMillis() - (double) callTime) / (double) 1000) / (double) 60))) + "\n");
+            System.out.println("Payment Token: " +sha256(target).substring(0, 33)+ sha256(current.substring(0, 33) + sha256(diff + "") + sha256(df.format(timeMins) + "") + current.substring(33))+sha256(target).substring(33)+ " Do not lose this or your CLM cannot be rewarded.");
             //(Diff/64(Diff*ElapsedTime)) = CLM Owed
             /*
-            */
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter(path+"\\pendingtx.txt", true))) {
-                bw.write(current+ " "+target+" "+literalHash.dec2hex(new BigInteger(diff+""))+" "+df.format(timeMins));
+             */
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(path + "\\pendingtx.txt", true))) {
+                bw.write(current + " " + target + " " + literalHash.dec2hex(new BigInteger(diff + "")) + " " + df.format(timeMins));
                 bw.newLine();
-                bw.write("CLM Owed: "+ (((double)diff/(double)64)*(diff*((((double)System.currentTimeMillis()-(double)callTime)/(double)1000)/(double)60)))+"\n");
+                bw.write("CLM Owed: " + (((double) diff / (double) 64) * (diff * ((((double) System.currentTimeMillis() - (double) callTime) / (double) 1000) / (double) 60))) + "\n");
                 bw.newLine();
-                bw.write("Payment Token: "+sha256(target).substring(0, 33)+sha256(current.substring(0,33)+sha256(diff+"")+sha256(df.format(timeMins)+"")+current.substring(33))+sha256(target).substring(33));
+                bw.write("Payment Token: " +sha256(target).substring(0, 33)+sha256(current.substring(0, 33) + sha256(diff + "") + sha256(df.format(timeMins) + "") + current.substring(33))+sha256(target).substring(33));
                 bw.newLine();
                 bw.write("NEVER lose your payment token, you cannot redeem your reward without it.");
                 bw.newLine();
@@ -493,60 +401,84 @@ class Tools implements Runnable, KeyListener{
         }
 
     }
-    public static boolean checkToken()
-    {
-      System.out.println("<validHash><diff><target><time><token>");
-      Scanner sc = new Scanner(System.in);
-      String validHash = sc.nextLine();
-      if(validHash.length()<64)
-        return false;
-      int diff = sc.nextInt();
-      String target = sc.nextLine();
-      if(target.length()<diff)
-      	return false;
-      double time = sc.nextDouble();
-      String token = sc.nextLine();
-      token = sc.nextLine();
-      if(token.length()!=64)
-        return false;
-      return token.equals(sha256(target).substring(0, 33)+sha256(validHash.substring(0,33)+sha256(diff+"")+sha256(time+"")+validHash.substring(33))+sha256(target).substring(33));
+
+    public static boolean checkToken() {
+        System.out.println("<hash(String)><diff(int)><target(String)><time(double)><token(String)>");
+        Scanner sc = new Scanner(System.in);
+        String validHash = sc.nextLine();
+        int diff = sc.nextInt();
+        sc.nextLine();
+        String target = sc.nextLine();
+        double time = sc.nextDouble();
+        String token = sc.nextLine();
+        token = sc.nextLine();
+        if (validHash.length() != 64)
+        {
+          System.out.println("short/long hash");
+            return false;
+        }
+        if (token.length() != 128)
+        {
+          System.out.println("short/long token");
+            return false;
+        }
+        if (target.length()<diff)
+        {
+          System.out.println("Invalid target given diff");
+            return false;
+        }
+          return token.equals(sha256(target).substring(0, 33)+sha256(validHash.substring(0, 33) + sha256(diff + "") + sha256(time + "") + validHash.substring(33))+sha256(target).substring(33));
     }
+
+    @Override
+    public void run() {
+        try {
+            ASCIIDL.ASCII("YTool v0.1", false);
+            Execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void keyPressed(KeyEvent e) {
         boolean s = false;
         boolean ctrl = false;
-        if(e.getKeyCode() == KeyEvent.VK_S)
+        if (e.getKeyCode() == KeyEvent.VK_S)
             s = true;
-        else if(e.getKeyCode() == KeyEvent.VK_CONTROL)
+        else if (e.getKeyCode() == KeyEvent.VK_CONTROL)
             ctrl = true;
-        if(s&&ctrl)
+        if (s && ctrl)
             stop = true;
 
     }
-    public void keyReleased(KeyEvent e) {}
-    public void keyTyped(KeyEvent e) {stop = false;}
+
+    public void keyReleased(KeyEvent e) {
+    }
+
+    public void keyTyped(KeyEvent e) {
+        stop = false;
+    }
 }
-class literalHash{
+
+class literalHash {
     final public static String list = "GHIJKLMNOPQRSTUVWXYZghijklmnopqrstuvwxyz!@#$%^&*()`~-_=+[{]};:',./<>?\"|";
     final public static String binchar = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()`~-_=+[{]};:',./<>?\"|";
     public static char[] chararray = list.toCharArray();
     public static List<Character> nonAcceptableHex = new ArrayList<Character>();
     public static List<Character> nonAcceptableBin = new ArrayList<Character>();
     public static String bin = "";
-    public static String hash(String base)
-    {
+
+    public static String hash(String base) {
         return Tools.sha256(base);
     }
-    public static BigInteger hex2dec(String hex)
-    {
-        for(char i:chararray)
-        {
+
+    public static BigInteger hex2dec(String hex) {
+        for (char i : chararray) {
             nonAcceptableHex.add(i);
         }
         char[] contents = hex.toCharArray();
-        for(int i = 0; i<contents.length; i++)
-        {
-            if(nonAcceptableHex.contains(contents[i]))
-            {
+        for (int i = 0; i < contents.length; i++) {
+            if (nonAcceptableHex.contains(contents[i])) {
                 System.out.println("non hex characters detected");
                 return new BigInteger("-1");
             }
@@ -554,79 +486,67 @@ class literalHash{
         BigInteger bi = new BigInteger(hex, 16);
         return bi;
     }
-    public static String dec2hex(BigInteger base)
-    {
+
+    public static String dec2hex(BigInteger base) {
         try {
             return base.toString(16);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             return "Unrecognizable input";
         }
 
     }
-    public static String dec2bin(BigInteger dec)
-    {
+
+    public static String dec2bin(BigInteger dec) {
         try {
-            if(dec.compareTo(BigInteger.ONE)==-1||dec.compareTo(BigInteger.ONE)==0)
-                bin = bin+dec.mod(BigInteger.valueOf(2));
-            else
-            {
-                bin = bin+dec2bin(dec.divide(BigInteger.valueOf(2)));
+            if (dec.compareTo(BigInteger.ONE) == -1 || dec.compareTo(BigInteger.ONE) == 0)
+                bin = bin + dec.mod(BigInteger.valueOf(2));
+            else {
+                bin = bin + dec2bin(dec.divide(BigInteger.valueOf(2)));
                 bin = bin + dec.mod(BigInteger.valueOf(2));
             }
             String temp = bin;
             bin = "";
             return temp;
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             return "Unrecognizable input";
         }
     }
-    public static String bin2dec(String bin)
-    {
+
+    public static String bin2dec(String bin) {
         String res = "";
         char[] binary = bin.toCharArray();
         BigInteger decimal = BigInteger.ZERO;
         BigInteger base = BigInteger.valueOf(2);
-        for(int j = binary.length-1; j >= 0; j--)
-        {
-            if(binary[j]=='1')
-                decimal = decimal.add((base.pow((binary.length-j)-1)));
-            else if(binary[j]!='1'&&binary[j]!='0')
-            {
+        for (int j = binary.length - 1; j >= 0; j--) {
+            if (binary[j] == '1')
+                decimal = decimal.add((base.pow((binary.length - j) - 1)));
+            else if (binary[j] != '1' && binary[j] != '0') {
                 decimal = new BigInteger("-1");
                 res = "this result is wrong, as you used a non-binary number";
                 return res;
             }
         }
-        return res+decimal;
+        return res + decimal;
     }
-    public static String bin2hex(String binary)
-    {
+
+    public static String bin2hex(String binary) {
         try {
             String res = "";
             BigInteger decimal = new BigInteger(bin2dec(binary));
             return dec2hex(decimal);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             return "Unrecognizable input";
         }
 
     }
-    public static String hex2bin(String hex)
-    {
-        for(char i:chararray)
-        {
+
+    public static String hex2bin(String hex) {
+        for (char i : chararray) {
             nonAcceptableHex.add(i);
         }
         char[] contents = hex.toCharArray();
-        for(int i = 0; i<contents.length; i++)
-        {
-            if(nonAcceptableHex.contains(contents[i]))
-            {
+        for (int i = 0; i < contents.length; i++) {
+            if (nonAcceptableHex.contains(contents[i])) {
                 return "non hex characters detected";
             }
         }
@@ -636,133 +556,110 @@ class literalHash{
         binary = "";
         return standin;
     }
-    public static BigInteger base2dec(String number, int base)
-    {
+
+    public static BigInteger base2dec(String number, int base) {
         BigInteger bi = new BigInteger(number, base);
         return bi;
     }
-    public static String base2hex(String number, int base)
-    {
+
+    public static String base2hex(String number, int base) {
         BigInteger bi = base2dec(number, base);
         return dec2hex(bi);
     }
-    public static String base2bin(String number, int base)
-    {
+
+    public static String base2bin(String number, int base) {
         BigInteger bi = new BigInteger(number, base);
         return dec2bin(bi);
     }
-    public static String base2base(String number, int base, int desiredbase)
-    {
+
+    public static String base2base(String number, int base, int desiredbase) {
         BigInteger bi = new BigInteger(number, base);
         return bi.toString(desiredbase);
     }
-    public static String dec2base(BigInteger bi, int desiredbase)
-    {
+
+    public static String dec2base(BigInteger bi, int desiredbase) {
         return bi.toString(desiredbase);
     }
-    public static String hex2base(String hex, int desiredbase)
-    {
+
+    public static String hex2base(String hex, int desiredbase) {
         BigInteger bi = new BigInteger(hex, 16);
         return bi.toString(desiredbase);
     }
-    public static String bin2base(String bin, int desiredbase)
-    {
+
+    public static String bin2base(String bin, int desiredbase) {
         BigInteger bi = new BigInteger(bin2dec(bin));
         return bi.toString(desiredbase);
     }
-    public static String leetify(String inputs)
-    {
+
+    public static String leetify(String inputs) {
         String edit = inputs;
-        char [] editchar = edit.toCharArray();
-        for(int i = 0; i < editchar.length; i++)
-        {
-            if(editchar[i]=='a'||editchar[i]=='A')
-            {
+        char[] editchar = edit.toCharArray();
+        for (int i = 0; i < editchar.length; i++) {
+            if (editchar[i] == 'a' || editchar[i] == 'A') {
                 editchar[i] = '4';
-            }
-            else if(editchar[i]=='b'||editchar[i]=='B')
-            {
+            } else if (editchar[i] == 'b' || editchar[i] == 'B') {
                 editchar[i] = '8';
-            }
-            else if(editchar[i]=='i'||editchar[i]=='I')
-            {
+            } else if (editchar[i] == 'i' || editchar[i] == 'I') {
                 editchar[i] = '1';
-            }
-            else if(editchar[i]=='q'||editchar[i]=='Q')
-            {
+            } else if (editchar[i] == 'q' || editchar[i] == 'Q') {
                 editchar[i] = '9';
-            }
-            else if(editchar[i]=='s'||editchar[i]=='S')
-            {
+            } else if (editchar[i] == 's' || editchar[i] == 'S') {
                 editchar[i] = '5';
-            }
-            else if(editchar[i]=='z'||editchar[i]=='Z')
-            {
+            } else if (editchar[i] == 'z' || editchar[i] == 'Z') {
                 editchar[i] = '2';
-            }
-            else if(editchar[i]=='e'||editchar[i]=='E')
-            {
+            } else if (editchar[i] == 'e' || editchar[i] == 'E') {
                 editchar[i] = '3';
-            }
-            else if(editchar[i]=='g'||editchar[i]=='G')
-            {
+            } else if (editchar[i] == 'g' || editchar[i] == 'G') {
                 editchar[i] = '6';
-            }
-            else if(editchar[i]=='o'||editchar[i]=='O')
-            {
+            } else if (editchar[i] == 'o' || editchar[i] == 'O') {
                 editchar[i] = '0';
             }
         }
         edit = new String(editchar);
         return edit;
     }
-    public static String bibbafy(String inputs)
-    {
+
+    public static String bibbafy(String inputs) {
         String edit = inputs;
-        char [] editchar = edit.toCharArray();
-        for(int i = 0; i < editchar.length; i++)
-        {
-            if(editchar[i]=='b')
-            {
+        char[] editchar = edit.toCharArray();
+        for (int i = 0; i < editchar.length; i++) {
+            if (editchar[i] == 'b') {
                 editchar[i] = 'B';
             }
         }
         edit = new String(editchar);
         return edit;
     }
-    public static String discordbibbafy(String inputs)
-    {
+
+    public static String discordbibbafy(String inputs) {
         inputs = inputs.replaceAll("B", "b");
         return inputs = inputs.replaceAll("b", ":b:");
     }
-    public static void gpugrlc()
-    {
+
+    public static void gpugrlc() {
         try {
             ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/C", "Start", "Garlic.bat");
             File dir = new File("C:\\Users\\yquan\\Desktop\\ccminer");
             pb.directory(dir);
             Process p = pb.start();
-        }
-        catch(IOException e)
-        {
+        } catch (IOException e) {
             System.out.println("Program failed to start");
         }
     }
-    public static void cpugrlc()
-    {
+
+    public static void cpugrlc() {
         try {
             ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/C", "Start", "Garlic.bat");
             File dir = new File("C:\\Users\\yquan\\Desktop\\cpuminer-opt-3.8.3.1-windows");
             pb.directory(dir);
             Process p = pb.start();
-        }
-        catch(IOException e)
-        {
+        } catch (IOException e) {
             System.out.println("Program failed to start");
         }
     }
 
 }
+
 class Recovery {
 
     final Object lock = new Object();
@@ -771,7 +668,7 @@ class Recovery {
         while (true) {
             // Synchronising to make sure that only one instance
             // of runnable input is running at the time.
-            synchronized(lock) {
+            synchronized (lock) {
                 try {
                     runnable.run();
                     // Ideally the process should run forever
@@ -789,26 +686,23 @@ class Recovery {
     }
 
 }
-class TestException extends Exception
-{
-    public TestException(String s)
-    {
+
+class TestException extends Exception {
+    public TestException(String s) {
         // Call constructor of parent Exception
         super(s);
     }
 }
-class MethodsDL
-{
+
+class MethodsDL {
     static final String author = "Damian Lall, edited by Yicheng Quan";
     static final double version = 1.8D;
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         System.out.println();
     }
 
-    public static void Info()
-    {
+    public static void Info() {
         System.out.println("Author: Damian Lall, Contributor: Yicheng Quan");
         Delay(250);
         System.out.println("Version: 1.8");
@@ -816,33 +710,26 @@ class MethodsDL
         System.out.println("Subclasses: deprecated(MathDL), ASCIIDL");
     }
 
-    public static void Commands()
-    {
+    public static void Commands() {
         System.out.println("Info(): Provides general information regarding the MethodsDL class.");
         System.out.println("Commands(): Provides a list of MethodsDL commands and their uses.");
         System.out.println("Delay(int delayTime): Delays the program for the specified number of milliseconds.");
         System.out.println("Random(int min, int max): Generates a random number between the min and max.");
     }
 
-    public static void Delay(int delayTime)
-    {
-        try
-        {
+    public static void Delay(int delayTime) {
+        try {
             TimeUnit.MILLISECONDS.sleep(delayTime);
-        }
-        catch (InterruptedException ex)
-        {
+        } catch (InterruptedException ex) {
             Logger.getLogger(MethodsDL.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public static void Load(String load)
-    {
+    public static void Load(String load) {
         Load(load, 200);
     }
 
-    public static void Load(String load, int speed)
-    {
+    public static void Load(String load, int speed) {
         System.out.print(load);
         Delay(speed);
         System.out.print(".");
@@ -853,46 +740,45 @@ class MethodsDL
         Delay(speed);
     }
 
-    public static void SlowReveal(String reveal)
-    {
+    public static void SlowReveal(String reveal) {
         SlowReveal(reveal, 20);
     }
 
-    public static void SlowReveal(String reveal, int speed)
-    {
+    public static void SlowReveal(String reveal, int speed) {
         char[] split = reveal.toCharArray();
-        for (char r : split)
-        {
+        for (char r : split) {
             System.out.print(r);
             Delay(speed);
         }
         System.out.println();
     }
 
-    public static int Random(int min, int max)
-    {
-        return (int)(Math.random() * (max - min + 1)) + min;
+    public static int Random(int min, int max) {
+        return (int) (Math.random() * (max - min + 1)) + min;
     }
 
-    public static int ChooseRandom(int[] arr)
-    {
+    public static int ChooseRandom(int[] arr) {
         return arr[Random(0, arr.length - 1)];
     }
 
-    public static double ChooseRandom(double[] arr)
-    {
+    public static double ChooseRandom(double[] arr) {
         return arr[Random(0, arr.length - 1)];
     }
 
-    public static String ChooseRandom(String[] arr)
-    {
+    public static String ChooseRandom(String[] arr) {
         return arr[Random(0, arr.length - 1)];
     }
 }
-class ASCIIDL extends MethodsDL
-{
-    public static void Info()
-    {
+
+class ASCIIDL extends MethodsDL {
+    private static String level1 = "";
+    private static String level2 = "";
+    private static String level3 = "";
+    private static String level4 = "";
+    private static String level5 = "";
+    private static String level6 = "";
+
+    public static void Info() {
         System.out.println("Author: Damian Lall");
         Delay(250);
         System.out.println("Version: 1.7");
@@ -902,22 +788,13 @@ class ASCIIDL extends MethodsDL
         System.out.println("Other Classes: MathDL");
     }
 
-    public static void Commands()
-    {
+    public static void Commands() {
         System.out.println("Info(): Provides general information regarding the ASCIIDL class.");
         System.out.println("Commands(): Provides a list of ASCIIDL commands and their uses.");
         System.out.println("ASCII(String text, boolean slow): Displays the inputted text as large ASCII-based characters.");
     }
 
-    private static String level1 = "";
-    private static String level2 = "";
-    private static String level3 = "";
-    private static String level4 = "";
-    private static String level5 = "";
-    private static String level6 = "";
-
-    public static void ASCII(String text, boolean slow)
-    {
+    public static void ASCII(String text, boolean slow) {
         char[] textArray = text.toUpperCase().toCharArray();
 
         level1 = "";
@@ -927,8 +804,7 @@ class ASCIIDL extends MethodsDL
         level5 = "";
         level6 = "";
         for (int i = 0; i < textArray.length; i++) {
-            switch (textArray[i])
-            {
+            switch (textArray[i]) {
                 case '0':
                     drawZero();
                     break;
@@ -1114,8 +990,7 @@ class ASCIIDL extends MethodsDL
                     System.out.println("Error - Invalid Charachter");
             }
         }
-        if (level1.length() > 79)
-        {
+        if (level1.length() > 79) {
             level1 = level1.substring(0, 79);
             level2 = level2.substring(0, 79);
             level3 = level3.substring(0, 79);
@@ -1123,8 +998,7 @@ class ASCIIDL extends MethodsDL
             level5 = level5.substring(0, 79);
             level6 = level6.substring(0, 79);
         }
-        if (slow)
-        {
+        if (slow) {
             Delay(200);
             System.out.println(level1);
             Delay(200);
@@ -1137,9 +1011,7 @@ class ASCIIDL extends MethodsDL
             System.out.println(level5);
             Delay(200);
             System.out.println(level6);
-        }
-        else
-        {
+        } else {
             System.out.println(level1);
             System.out.println(level2);
             System.out.println(level3);
@@ -1148,8 +1020,8 @@ class ASCIIDL extends MethodsDL
             System.out.println(level6);
         }
     }
-    private static void drawZero()
-    {
+
+    private static void drawZero() {
         level1 += "  ____  ";
         level2 += " / __ \\ ";
         level3 += "| | /| |";
@@ -1157,8 +1029,8 @@ class ASCIIDL extends MethodsDL
         level5 += "| |__| |";
         level6 += " \\____/ ";
     }
-    private static void drawOne()
-    {
+
+    private static void drawOne() {
         level1 += " __ ";
         level2 += "/_ |";
         level3 += " | |";
@@ -1167,8 +1039,7 @@ class ASCIIDL extends MethodsDL
         level6 += " |_|";
     }
 
-    private static void drawTwo()
-    {
+    private static void drawTwo() {
         level1 += " ___  ";
         level2 += "|__ \\ ";
         level3 += "   ) |";
@@ -1177,8 +1048,7 @@ class ASCIIDL extends MethodsDL
         level6 += "|____|";
     }
 
-    private static void drawThree()
-    {
+    private static void drawThree() {
         level1 += " ____  ";
         level2 += "|___ \\ ";
         level3 += "  __) |";
@@ -1187,8 +1057,7 @@ class ASCIIDL extends MethodsDL
         level6 += "|____/ ";
     }
 
-    private static void drawFour()
-    {
+    private static void drawFour() {
         level1 += " _  _   ";
         level2 += "| || |  ";
         level3 += "| || |_ ";
@@ -1197,8 +1066,7 @@ class ASCIIDL extends MethodsDL
         level6 += "   |_|  ";
     }
 
-    private static void drawFive()
-    {
+    private static void drawFive() {
         level1 += " _____ ";
         level2 += "| ____|";
         level3 += "| |__  ";
@@ -1207,8 +1075,7 @@ class ASCIIDL extends MethodsDL
         level6 += "|____/ ";
     }
 
-    private static void drawSix()
-    {
+    private static void drawSix() {
         level1 += "   __  ";
         level2 += "  / /  ";
         level3 += " / /_  ";
@@ -1217,8 +1084,7 @@ class ASCIIDL extends MethodsDL
         level6 += " \\___/ ";
     }
 
-    private static void drawSeven()
-    {
+    private static void drawSeven() {
         level1 += " ______ ";
         level2 += "|____  |";
         level3 += "    / / ";
@@ -1227,8 +1093,7 @@ class ASCIIDL extends MethodsDL
         level6 += " /_/    ";
     }
 
-    private static void drawEight()
-    {
+    private static void drawEight() {
         level1 += "  ___  ";
         level2 += " / _ \\ ";
         level3 += "| (_) |";
@@ -1237,8 +1102,7 @@ class ASCIIDL extends MethodsDL
         level6 += " \\___/ ";
     }
 
-    private static void drawNine()
-    {
+    private static void drawNine() {
         level1 += "  ___  ";
         level2 += " / _ \\ ";
         level3 += "| (_) |";
@@ -1247,8 +1111,7 @@ class ASCIIDL extends MethodsDL
         level6 += "  /_/  ";
     }
 
-    private static void drawA()
-    {
+    private static void drawA() {
         level1 += "          ";
         level2 += "    /\\    ";
         level3 += "   /  \\   ";
@@ -1257,8 +1120,7 @@ class ASCIIDL extends MethodsDL
         level6 += "/_/    \\_\\";
     }
 
-    private static void drawB()
-    {
+    private static void drawB() {
         level1 += " ____  ";
         level2 += "|  _ \\ ";
         level3 += "| |_) |";
@@ -1267,8 +1129,7 @@ class ASCIIDL extends MethodsDL
         level6 += "|____/ ";
     }
 
-    private static void drawC()
-    {
+    private static void drawC() {
         level1 += "  _____ ";
         level2 += " / ____|";
         level3 += "| |     ";
@@ -1277,8 +1138,7 @@ class ASCIIDL extends MethodsDL
         level6 += " \\_____|";
     }
 
-    private static void drawD()
-    {
+    private static void drawD() {
         level1 += " _____  ";
         level2 += "|  __ \\ ";
         level3 += "| |  | |";
@@ -1287,8 +1147,7 @@ class ASCIIDL extends MethodsDL
         level6 += "|_____/ ";
     }
 
-    private static void drawE()
-    {
+    private static void drawE() {
         level1 += " ______ ";
         level2 += "|  ____|";
         level3 += "| |__   ";
@@ -1297,8 +1156,7 @@ class ASCIIDL extends MethodsDL
         level6 += "|______|";
     }
 
-    private static void drawF()
-    {
+    private static void drawF() {
         level1 += " ______ ";
         level2 += "|  ____|";
         level3 += "| |__   ";
@@ -1307,8 +1165,7 @@ class ASCIIDL extends MethodsDL
         level6 += "|_|     ";
     }
 
-    private static void drawG()
-    {
+    private static void drawG() {
         level1 += "  _____ ";
         level2 += " / ____|";
         level3 += "| |  __ ";
@@ -1317,8 +1174,7 @@ class ASCIIDL extends MethodsDL
         level6 += " \\_____|";
     }
 
-    private static void drawH()
-    {
+    private static void drawH() {
         level1 += " _    _ ";
         level2 += "| |  | |";
         level3 += "| |__| |";
@@ -1327,8 +1183,7 @@ class ASCIIDL extends MethodsDL
         level6 += "|_|  |_|";
     }
 
-    private static void drawI()
-    {
+    private static void drawI() {
         level1 += " _____ ";
         level2 += "|_   _|";
         level3 += "  | |  ";
@@ -1337,8 +1192,7 @@ class ASCIIDL extends MethodsDL
         level6 += "|_____|";
     }
 
-    private static void drawJ()
-    {
+    private static void drawJ() {
         level1 += "      _ ";
         level2 += "     | |";
         level3 += "     | |";
@@ -1347,8 +1201,7 @@ class ASCIIDL extends MethodsDL
         level6 += " \\____/ ";
     }
 
-    private static void drawK()
-    {
+    private static void drawK() {
         level1 += " _  __";
         level2 += "| |/ /";
         level3 += "| ' / ";
@@ -1357,8 +1210,7 @@ class ASCIIDL extends MethodsDL
         level6 += "|_|\\_\\";
     }
 
-    private static void drawL()
-    {
+    private static void drawL() {
         level1 += " _      ";
         level2 += "| |     ";
         level3 += "| |     ";
@@ -1367,8 +1219,7 @@ class ASCIIDL extends MethodsDL
         level6 += "|______|";
     }
 
-    private static void drawM()
-    {
+    private static void drawM() {
         level1 += " __  __ ";
         level2 += "|  \\/  |";
         level3 += "| \\  / |";
@@ -1377,8 +1228,7 @@ class ASCIIDL extends MethodsDL
         level6 += "|_|  |_|";
     }
 
-    private static void drawN()
-    {
+    private static void drawN() {
         level1 += " _   _ ";
         level2 += "| \\ | |";
         level3 += "|  \\| |";
@@ -1387,8 +1237,7 @@ class ASCIIDL extends MethodsDL
         level6 += "|_| \\_|";
     }
 
-    private static void drawO()
-    {
+    private static void drawO() {
         level1 += "  ____  ";
         level2 += " / __ \\ ";
         level3 += "| |  | |";
@@ -1397,8 +1246,7 @@ class ASCIIDL extends MethodsDL
         level6 += " \\____/ ";
     }
 
-    private static void drawP()
-    {
+    private static void drawP() {
         level1 += " _____  ";
         level2 += "|  __ \\ ";
         level3 += "| |__) |";
@@ -1407,8 +1255,7 @@ class ASCIIDL extends MethodsDL
         level6 += "|_|     ";
     }
 
-    private static void drawQ()
-    {
+    private static void drawQ() {
         level1 += "  ____  ";
         level2 += " / __ \\ ";
         level3 += "| |  | |";
@@ -1417,8 +1264,7 @@ class ASCIIDL extends MethodsDL
         level6 += " \\___\\_\\";
     }
 
-    private static void drawR()
-    {
+    private static void drawR() {
         level1 += " _____  ";
         level2 += "|  __ \\ ";
         level3 += "| |__) |";
@@ -1427,8 +1273,7 @@ class ASCIIDL extends MethodsDL
         level6 += "|_|  \\_\\";
     }
 
-    private static void drawS()
-    {
+    private static void drawS() {
         level1 += "  _____ ";
         level2 += " / ____|";
         level3 += "| (___  ";
@@ -1437,8 +1282,7 @@ class ASCIIDL extends MethodsDL
         level6 += "|_____/ ";
     }
 
-    private static void drawT()
-    {
+    private static void drawT() {
         level1 += " _______ ";
         level2 += "|__   __|";
         level3 += "   | |   ";
@@ -1447,8 +1291,7 @@ class ASCIIDL extends MethodsDL
         level6 += "   |_|   ";
     }
 
-    private static void drawU()
-    {
+    private static void drawU() {
         level1 += " _    _ ";
         level2 += "| |  | |";
         level3 += "| |  | |";
@@ -1457,8 +1300,7 @@ class ASCIIDL extends MethodsDL
         level6 += " \\____/ ";
     }
 
-    private static void drawV()
-    {
+    private static void drawV() {
         level1 += "__      __";
         level2 += "\\ \\    / /";
         level3 += " \\ \\  / / ";
@@ -1467,8 +1309,7 @@ class ASCIIDL extends MethodsDL
         level6 += "    \\/    ";
     }
 
-    private static void drawW()
-    {
+    private static void drawW() {
         level1 += "__          __";
         level2 += "\\ \\        / /";
         level3 += " \\ \\  /\\  / / ";
@@ -1477,8 +1318,7 @@ class ASCIIDL extends MethodsDL
         level6 += "    \\/  \\/    ";
     }
 
-    private static void drawX()
-    {
+    private static void drawX() {
         level1 += "__   __";
         level2 += "\\ \\ / /";
         level3 += " \\ ' / ";
@@ -1487,8 +1327,7 @@ class ASCIIDL extends MethodsDL
         level6 += "/_/ \\_\\";
     }
 
-    private static void drawY()
-    {
+    private static void drawY() {
         level1 += "__     __";
         level2 += "\\ \\   / /";
         level3 += " \\ \\_/ / ";
@@ -1497,8 +1336,7 @@ class ASCIIDL extends MethodsDL
         level6 += "   |_|   ";
     }
 
-    private static void drawZ()
-    {
+    private static void drawZ() {
         level1 += " ______";
         level2 += "|___  /";
         level3 += "   / / ";
@@ -1507,8 +1345,7 @@ class ASCIIDL extends MethodsDL
         level6 += "/_____|";
     }
 
-    private static void drawSpace()
-    {
+    private static void drawSpace() {
         level1 += "       ";
         level2 += "       ";
         level3 += "       ";
@@ -1517,8 +1354,7 @@ class ASCIIDL extends MethodsDL
         level6 += "       ";
     }
 
-    private static void drawPeriod()
-    {
+    private static void drawPeriod() {
         level1 += "   ";
         level2 += "   ";
         level3 += "   ";
@@ -1527,8 +1363,7 @@ class ASCIIDL extends MethodsDL
         level6 += "(_)";
     }
 
-    private static void drawExclamation()
-    {
+    private static void drawExclamation() {
         level1 += " _ ";
         level2 += "| |";
         level3 += "| |";
@@ -1537,8 +1372,7 @@ class ASCIIDL extends MethodsDL
         level6 += "(_)";
     }
 
-    private static void drawQuestion()
-    {
+    private static void drawQuestion() {
         level1 += " ___  ";
         level2 += "|__ \\ ";
         level3 += "   ) |";
@@ -1547,8 +1381,7 @@ class ASCIIDL extends MethodsDL
         level6 += " (_)  ";
     }
 
-    private static void drawComma()
-    {
+    private static void drawComma() {
         level1 += "   ";
         level2 += "   ";
         level3 += "   ";
@@ -1557,8 +1390,7 @@ class ASCIIDL extends MethodsDL
         level6 += "|/ ";
     }
 
-    private static void drawApostrophe()
-    {
+    private static void drawApostrophe() {
         level1 += " _ ";
         level2 += "( )";
         level3 += "|/ ";
@@ -1567,8 +1399,7 @@ class ASCIIDL extends MethodsDL
         level6 += "   ";
     }
 
-    private static void drawEquals()
-    {
+    private static void drawEquals() {
         level1 += "        ";
         level2 += " ______ ";
         level3 += "|______|";
@@ -1577,8 +1408,7 @@ class ASCIIDL extends MethodsDL
         level6 += "        ";
     }
 
-    private static void drawLess()
-    {
+    private static void drawLess() {
         level1 += "   __";
         level2 += "  / /";
         level3 += " / / ";
@@ -1587,8 +1417,7 @@ class ASCIIDL extends MethodsDL
         level6 += "  \\_\\";
     }
 
-    private static void drawMore()
-    {
+    private static void drawMore() {
         level1 += "__   ";
         level2 += "\\ \\  ";
         level3 += " \\ \\ ";
@@ -1597,8 +1426,7 @@ class ASCIIDL extends MethodsDL
         level6 += "/_/  ";
     }
 
-    private static void drawForward()
-    {
+    private static void drawForward() {
         level1 += "     __";
         level2 += "    / /";
         level3 += "   / / ";
@@ -1607,8 +1435,7 @@ class ASCIIDL extends MethodsDL
         level6 += "/_/    ";
     }
 
-    private static void drawBack()
-    {
+    private static void drawBack() {
         level1 += "__     ";
         level2 += "\\ \\    ";
         level3 += " \\ \\   ";
@@ -1617,8 +1444,7 @@ class ASCIIDL extends MethodsDL
         level6 += "    \\_\\";
     }
 
-    private static void drawColon()
-    {
+    private static void drawColon() {
         level1 += " _ ";
         level2 += "(_)";
         level3 += "   ";
@@ -1627,8 +1453,7 @@ class ASCIIDL extends MethodsDL
         level6 += "   ";
     }
 
-    private static void drawSemicolon()
-    {
+    private static void drawSemicolon() {
         level1 += " _ ";
         level2 += "(_)";
         level3 += "   ";
@@ -1637,8 +1462,7 @@ class ASCIIDL extends MethodsDL
         level6 += "|/ ";
     }
 
-    private static void drawOpenParenthesis()
-    {
+    private static void drawOpenParenthesis() {
         level1 += "  __";
         level2 += " / /";
         level3 += "| | ";
@@ -1647,8 +1471,7 @@ class ASCIIDL extends MethodsDL
         level6 += " \\_\\";
     }
 
-    private static void drawCloseParenthesis()
-    {
+    private static void drawCloseParenthesis() {
         level1 += "__  ";
         level2 += "\\ \\ ";
         level3 += " | |";
@@ -1657,8 +1480,7 @@ class ASCIIDL extends MethodsDL
         level6 += "/_/ ";
     }
 
-    private static void drawQuotes()
-    {
+    private static void drawQuotes() {
         level1 += " _ _ ";
         level2 += "( | )";
         level3 += " V V ";
@@ -1667,8 +1489,7 @@ class ASCIIDL extends MethodsDL
         level6 += "     ";
     }
 
-    private static void drawAt()
-    {
+    private static void drawAt() {
         level1 += "   ____  ";
         level2 += "  / __ \\ ";
         level3 += " / / _` |";
@@ -1677,8 +1498,7 @@ class ASCIIDL extends MethodsDL
         level6 += "  \\____/ ";
     }
 
-    private static void drawNumber()
-    {
+    private static void drawNumber() {
         level1 += "   _  _   ";
         level2 += " _| || |_ ";
         level3 += "|_  __  _|";
@@ -1687,8 +1507,7 @@ class ASCIIDL extends MethodsDL
         level6 += "  |_||_|  ";
     }
 
-    private static void drawDollar()
-    {
+    private static void drawDollar() {
         level1 += "  _  ";
         level2 += " | | ";
         level3 += "/ __)";
@@ -1697,8 +1516,7 @@ class ASCIIDL extends MethodsDL
         level6 += " |_| ";
     }
 
-    private static void drawPercent()
-    {
+    private static void drawPercent() {
         level1 += " _   __";
         level2 += "(_) / /";
         level3 += "   / / ";
@@ -1707,8 +1525,7 @@ class ASCIIDL extends MethodsDL
         level6 += "/_/ (_)";
     }
 
-    private static void drawUp()
-    {
+    private static void drawUp() {
         level1 += "  /  \\  ";
         level2 += " / /\\ \\ ";
         level3 += "/_/  \\_\\";
@@ -1717,8 +1534,7 @@ class ASCIIDL extends MethodsDL
         level6 += "        ";
     }
 
-    private static void drawAnd()
-    {
+    private static void drawAnd() {
         level1 += "        ";
         level2 += "  ___   ";
         level3 += " ( _ )  ";
@@ -1727,8 +1543,7 @@ class ASCIIDL extends MethodsDL
         level6 += " \\___/\\/";
     }
 
-    private static void drawAsterisk()
-    {
+    private static void drawAsterisk() {
         level1 += "    _    ";
         level2 += " /\\| |/\\ ";
         level3 += " \\     / ";
@@ -1737,29 +1552,31 @@ class ASCIIDL extends MethodsDL
         level6 += " \\/|_|\\/ ";
     }
 }
-class CommieAI{
+
+class CommieAI {
     static boolean first = true;
     static int ct = 0;
+
     public void listen(String secretlistener) {
-        if(secretlistener.length()<5)
+        if (secretlistener.length() < 5)
             secretlistener = secretlistener + "          ";
-        if(secretlistener.contains("gay")||secretlistener.contains("gey"))
+        if (secretlistener.contains("gay") || secretlistener.contains("gey"))
             System.out.println("no u");
-        if(secretlistener.contains("niggr")||secretlistener.contains("nigger")||secretlistener.contains("nigga")||secretlistener.contains("bibba")||secretlistener.contains("nibber")||secretlistener.substring(0, 4).contains("nigg")||secretlistener.substring(0, 4).contains("nibb")||secretlistener.substring(0, 4).contains("bibb")||secretlistener.substring(0, 4).contains("bigg")||secretlistener.substring(0, 4).contains("nig")||secretlistener.substring(0, 4).contains("nib"))
+        if (secretlistener.contains("niggr") || secretlistener.contains("nigger") || secretlistener.contains("nigga") || secretlistener.contains("bibba") || secretlistener.contains("nibber") || secretlistener.substring(0, 4).contains("nigg") || secretlistener.substring(0, 4).contains("nibb") || secretlistener.substring(0, 4).contains("bibb") || secretlistener.substring(0, 4).contains("bigg") || secretlistener.substring(0, 4).contains("nig") || secretlistener.substring(0, 4).contains("nib"))
             System.out.println("your family tree lgbt");
-        if(secretlistener.contains("minecraft")||secretlistener.substring(0, 5).contains("minec"))
+        if (secretlistener.contains("minecraft") || secretlistener.substring(0, 5).contains("minec"))
             System.out.println("stfu mom im playing minecraft");
-        if(secretlistener.contains("roblox")||secretlistener.substring(0, 4).contains("robl"))
+        if (secretlistener.contains("roblox") || secretlistener.substring(0, 4).contains("robl"))
             System.out.println("i want robux for my birthday");
-        if(secretlistener.contains("ireland")||secretlistener.substring(0, 3).contains("ire"))
+        if (secretlistener.contains("ireland") || secretlistener.substring(0, 3).contains("ire"))
             System.out.println("26 + 6 = 1");
-        if(secretlistener.contains("beer")||secretlistener.contains("alcohol")||secretlistener.substring(0, 4).contains("alco"))
+        if (secretlistener.contains("beer") || secretlistener.contains("alcohol") || secretlistener.substring(0, 4).contains("alco"))
             System.out.println("irish handcuffs");
-        if(secretlistener.substring(0, 4).contains("gam")||secretlistener.substring(0, 4).contains("game"))
+        if (secretlistener.substring(0, 4).contains("gam") || secretlistener.substring(0, 4).contains("game"))
             System.out.println("in my basement *wink*");
-        if(secretlistener.substring(0, 4).contains("mom")||secretlistener.substring(0, 4).contains("mum")||secretlistener.substring(0, 4).contains("m0m"))
+        if (secretlistener.substring(0, 4).contains("mom") || secretlistener.substring(0, 4).contains("mum") || secretlistener.substring(0, 4).contains("m0m"))
             System.out.println("ur dad lesbian");
-        if(secretlistener.substring(0, 4).contains("lol")||secretlistener.substring(0, 4).contains("lul")||secretlistener.substring(0, 4).contains("l0l"))
+        if (secretlistener.substring(0, 4).contains("lol") || secretlistener.substring(0, 4).contains("lul") || secretlistener.substring(0, 4).contains("l0l"))
             System.out.println("thats pretty gay");
     }
 }
