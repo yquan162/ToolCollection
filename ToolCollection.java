@@ -42,8 +42,10 @@ public class ToolCollection {
 
 class Tools implements Runnable, KeyListener {
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()`~-_=+[{]};:',./<>?\"|";
+    private static final String HEX_STRING = "0123456789abcdef";
     public static String[] stopwords = {"exit", "Exit", "break", "Break", "stop", "Stop", "end", "End", "terminate", "Terminate"};
     public static String[] helpwords = {"help", "Help", "functions", "Functions"};
+    public static String[] errorwords = {"help", "functions","exit", "break", "stop", "end",  "terminate", "gethexstring" , "systeminfo" , "getos" , "getpath" , "leetify" , "getrandomstring" , "checktoken" , "mineblock" , "throwexception" , "getrandomhash" , "getepoch" , "dec2hex" , "bin2dec" , "bin2hex" , "clear" , "hex2dec" , "Clear" , "dec2bin" , "hex2bin" , "directhash" , "secretfunctions" , "gpugrlc" , "cpugrlc" , "getstate" , "setfalse" , "bibbafy" , "discordbibbafy" , "base2dec" , "base2hex" , "base2bin" , "base2base" , "dec2base" , "hex2base" , "bin2base" , "getcredits"};
     public static boolean stop = false;
     private static String salt;
     private static String salt2;
@@ -203,7 +205,20 @@ class Tools implements Runnable, KeyListener {
                 } else if (action.equals("getpath")) {
                     System.out.println("Working Directory = " + System.getProperty("user.dir"));
                 }
-                if (Arrays.asList(stopwords).contains(action) || Arrays.asList(helpwords).contains(action) || action.equals("getpath") || action.equals("leetify") || action.equals("getrandomstring") || action.equals("checktoken") || action.equals("mineblock") || action.equals("throwexception") || action.equals("getrandomhash") || action.equals("getepoch") || action.equals("dec2hex") || action.equals("bin2dec") || action.equals("bin2hex") || (action.equals("clear") || action.equals("hex2dec") || action.equals("Clear") || action.equals("dec2bin") || action.equals("hex2bin") || action.equals("directhash") || action.equals("secretfunctions") || action.equals("gpugrlc") || action.equals("cpugrlc") || action.equals("getstate") || action.equals("setfalse") || action.equals("bibbafy") || action.equals("discordbibbafy") || action.equals("base2dec") || action.equals("base2hex") || action.equals("base2bin") || action.equals("base2base") || action.equals("dec2base") || action.equals("hex2base") || action.equals("bin2base")) || action.equals("getcredits")) {
+                else if (action.equals("getos"))
+                {
+                    System.out.println(getOsName());
+                }
+                else if (action.equals("systeminfo"))
+                {
+                    getSystemInfo();
+                }
+                else if (action.equals("gethexstring"))
+                {
+                    int size = sc.nextInt();
+                    System.out.println(randomHex(size));
+                }
+                if (Arrays.asList(stopwords).contains(action) || Arrays.asList(helpwords).contains(action) || action.equals("gethexstring") || action.equals("systeminfo") || action.equals("getos") || action.equals("getpath") || action.equals("leetify") || action.equals("getrandomstring") || action.equals("checktoken") || action.equals("mineblock") || action.equals("throwexception") || action.equals("getrandomhash") || action.equals("getepoch") || action.equals("dec2hex") || action.equals("bin2dec") || action.equals("bin2hex") || (action.equals("clear") || action.equals("hex2dec") || action.equals("Clear") || action.equals("dec2bin") || action.equals("hex2bin") || action.equals("directhash") || action.equals("secretfunctions") || action.equals("gpugrlc") || action.equals("cpugrlc") || action.equals("getstate") || action.equals("setfalse") || action.equals("bibbafy") || action.equals("discordbibbafy") || action.equals("base2dec") || action.equals("base2hex") || action.equals("base2bin") || action.equals("base2base") || action.equals("dec2base") || action.equals("hex2base") || action.equals("bin2base")) || action.equals("getcredits")) {
                     if (Arrays.asList(helpwords).contains(action)) {
                         System.out.println("help-help");
                         System.out.println("functions-help");
@@ -229,6 +244,7 @@ class Tools implements Runnable, KeyListener {
                         System.out.println("getrandomhash-gets a securely generated random sha-256 hash");
                         System.out.println("throwexception-throws a new 'TestException' to test recovery system");
                         System.out.println("getrandomstring-creates a random alpha-numeric string given a length");
+                        System.out.println("getrandomhex-creates a random hex string given a length");
                         System.out.println("leetify-converts words using traditional english characters into mainstream leet");
                         System.out.println("bibbafy-adds them hard Bs to your text");
                         System.out.println("discordbibbafy-optimized for discord :wink:");
@@ -236,9 +252,17 @@ class Tools implements Runnable, KeyListener {
                         System.out.println("mineblock-finds a valid sha256 hash given int diff<65");
                         System.out.println("checktoken-clears payment of clm given <validHash><target><diff><target><time><token> in order");
                         System.out.println("getpath-displays the path where the program was initialized");
+                        System.out.println("getos-gives os name and architecture");
+                        System.out.println("systeminfo-gives system info");
                     }
                 } else
-                    System.out.println("This command does not seem to exist, to see a list of commands, type 'help'.");
+                {
+                    System.out.println("'"+action+"'"+" does not seem to exist, to see a list of commands, type 'help'.");
+                    System.out.println("Suggestions: ");
+                    for(String i:errorwords)
+                    	if(i.contains(action))
+                    		System.out.println(i);
+                }
                 if (Arrays.asList(stopwords).contains(action)) {
                     System.out.println("Are you sure? [Y/N]");
                     char stop = sc.nextLine().charAt(0);
@@ -287,6 +311,14 @@ class Tools implements Runnable, KeyListener {
         }
         return builder.toString();
     }
+    public static String randomHex(int count) {
+        StringBuilder builder = new StringBuilder();
+        while (count-- != 0) {
+            int character = (int) (Math.random() * HEX_STRING.length());
+            builder.append(HEX_STRING.charAt(character));
+        }
+        return builder.toString();
+    }
 
     private static String getNewSalt(String oldSalt) {
         String randomSalt = sha256("" + randomAlphaNumeric(256));
@@ -312,7 +344,24 @@ class Tools implements Runnable, KeyListener {
     public static String getBase() {
         return randomAlphaNumeric(64);
     }
+    public static boolean isProcessed(String check)
+    {
+        if(check.length()!=64&&check.length()!=128)
+            return false;
+            Scanner scanner = new Scanner("processedtx.txt");
 
+            //now read the file line by line...
+            int lineNum = 0;
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                lineNum++;
+                if(line.contains(check)) {
+                    System.out.println("Entry is already processed entry no. " +lineNum);
+                    return true;
+                }
+            }
+      return false;
+    }
     public static void mineBlock() throws InterruptedException, IOException {
         DecimalFormat df = new DecimalFormat("#.###");
         Scanner sc = new Scanner(System.in);
@@ -424,8 +473,13 @@ class Tools implements Runnable, KeyListener {
           System.out.println("Invalid target given diff");
             return false;
         }
+        if(isProcessed(validHash)==true||isProcessed(token)==true)
+        {
+          System.out.println("already processed");
+          return true;
+        }
         
-          if(token.equals(sha256(target).substring(0, 33)+sha256(validHash.substring(0, 33) + sha256(diff + "") + sha256(time + "") + validHash.substring(33))+sha256(target).substring(33))){
+          if(!(isProcessed(validHash)==true||isProcessed(token)==true)&&token.equals(sha256(target).substring(0, 33)+sha256(validHash.substring(0, 33) + sha256(diff + "") + sha256(time + "") + validHash.substring(33))+sha256(target).substring(33))){
              try (BufferedWriter bw1 = new BufferedWriter(new FileWriter(path + "\\processedtx.txt", true))) {
              	bw1.write(validHash+" "+token);
              	bw1.newLine();
@@ -437,7 +491,42 @@ class Tools implements Runnable, KeyListener {
           }
           	return false;
     }
+    public static String getOs()
+    {
+        return System.getProperty("os.name");
+    }
+    public static String getArchitecture()
+    {
+        return System.getProperty("os.arch");
+    }
+    public static String getOsName()
+    {
+        String architecture = getArchitecture();
+        return getOs()+" "+architecture;
+    }
+    public static void getSystemInfo() {
+    System.out.println("Available processors (cores): " + 
+        Runtime.getRuntime().availableProcessors());
 
+    System.out.println("Free memory (bytes): " + 
+        Runtime.getRuntime().freeMemory());
+
+    long maxMemory = Runtime.getRuntime().maxMemory();
+    System.out.println("Maximum memory (bytes): " + 
+        (maxMemory == Long.MAX_VALUE ? "no limit" : maxMemory));
+
+    System.out.println("Total memory available to JVM (bytes): " + 
+        Runtime.getRuntime().totalMemory());
+
+    File[] roots = File.listRoots();
+
+    for (File root : roots) {
+      System.out.println("File system root: " + root.getAbsolutePath());
+      System.out.println("Total space (bytes): " + root.getTotalSpace());
+      System.out.println("Free space (bytes): " + root.getFreeSpace());
+      System.out.println("Usable space (bytes): " + root.getUsableSpace());
+    }
+  }
     @Override
     public void run() {
         try {
