@@ -45,7 +45,7 @@ class Tools implements Runnable, KeyListener {
     private static final String HEX_STRING = "0123456789abcdef";
     public static String[] stopwords = {"exit", "Exit", "break", "Break", "stop", "Stop", "end", "End", "terminate", "Terminate"};
     public static String[] helpwords = {"help", "Help", "functions", "Functions"};
-    public static String[] errorwords = {"help", "functions","exit", "break", "stop", "end",  "terminate", "gethexstring" , "systeminfo" , "getos" , "getpath" , "leetify" , "getrandomstring" , "checktoken" , "mineblock" , "throwexception" , "getrandomhash" , "getepoch" , "dec2hex" , "bin2dec" , "bin2hex" , "clear" , "hex2dec" , "Clear" , "dec2bin" , "hex2bin" , "directhash" , "secretfunctions" , "gpugrlc" , "cpugrlc" , "getstate" , "setfalse" , "bibbafy" , "discordbibbafy" , "base2dec" , "base2hex" , "base2bin" , "base2base" , "dec2base" , "hex2base" , "bin2base" , "getcredits"};
+    public static String[] errorwords = {"debughash","help", "functions","exit", "break", "stop", "end",  "terminate", "gethexstring" , "systeminfo" , "getos" , "getpath" , "leetify" , "getrandomstring" , "checktoken" , "mineblock" , "throwexception" , "getrandomhash" , "getepoch" , "dec2hex" , "bin2dec" , "bin2hex" , "clear" , "hex2dec" , "Clear" , "dec2bin" , "hex2bin" , "directhash" , "secretfunctions" , "gpugrlc" , "cpugrlc" , "getstate" , "setfalse" , "bibbafy" , "discordbibbafy" , "base2dec" , "base2hex" , "base2bin" , "base2base" , "dec2base" , "hex2base" , "bin2base" , "getcredits"};
     public static boolean stop = false;
     private static String salt;
     private static String salt2;
@@ -53,6 +53,7 @@ class Tools implements Runnable, KeyListener {
     private static String finalHash;
     private static boolean gpugrlc = false;
     private static boolean cpugrlc = false;
+    private static boolean lbl = false;
     public static String placeholder = System.getProperty("user.dir");
     public static String path = placeholder.replaceAll("/", "\\");
     private static CommieAI ai = new CommieAI();
@@ -65,7 +66,16 @@ class Tools implements Runnable, KeyListener {
         salt2 = sha256(salt2);
         salt2 = salt2.substring(0, 15);
     }
-
+    public static void debugInit(){
+    	String randomalp = randomAlphaNumeric(64);
+    	System.out.println("init rand: "+randomalp);
+    	salt2 = salt2 + sha256(randomalp);
+    	System.out.println(randomalp+" sha256()--> "+sha256(randomalp));
+        salt2 = sha256(salt2);
+        System.out.println(salt2+" sha256()--> "+sha256(salt2));
+        salt2 = salt2.substring(0, 15);
+        System.out.println("Generated Salt: "+salt2);
+    }
     public static void Execute() throws Exception {
         int x = -1;
         int y = -1;
@@ -79,52 +89,66 @@ class Tools implements Runnable, KeyListener {
                 for (String keyword : aiwords) {
                     ai.listen(keyword);
                 }
-                if ((action.equals("clear") || action.equals("Clear"))) {
+                if ((action.contains("clear") || action.contains("Clear"))) {
                     new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
                     ASCIIDL.ASCII("YTool v0.1", false);
-                } else if (action.equals("getrandomhash")) {
+                } else if (action.contains("getrandomhash")) {
                     if (!(action.equals(null))) {
                         salt2 = salt2 + action;
                     }
                     hashInit();
                     System.out.println(getHash());
-                } else if (action.equals("mineblock"))
+                }
+                else if(action.contains("debughash"))
+                {
+                	if (!(action.equals(null))) {
+                        salt2 = salt2 + action;
+                    }
+                    System.out.println("init:" + salt2);
+                    debugInit();
+                    System.out.println(getDebugHash());
+                }
+                 else if (action.contains("mineblock"))
+                 {
+                   if(action.contains("-lbl"))
+                     lbl = true;
                     mineBlock();
-                else if (action.equals("secretfunctions")) {
+                 }
+                   else if (action.contains("secretfunctions")) {
                     gpugrlc = true;
                     cpugrlc = true;
-                } else if (action.equals("getcredits")) {
+                } else if (action.contains("getcredits")) {
                     System.out.println("Program by Yicheng Quan, MethodsDL and subclasses by Damian Lall");
-                } else if (action.equals("base2dec")) {
+                } else if (action.contains("base2dec")) {
                     String base2dec = sc.nextLine();
                     int base = sc.nextInt();
                     System.out.println(literalHash.base2dec(base2dec, base));
-                } else if (action.equals("base2hex")) {
+                } else if (action.contains("base2hex")) {
                     String base2hex = sc.nextLine();
                     int base = sc.nextInt();
                     System.out.println(literalHash.base2hex(base2hex, base));
-                } else if (action.equals("base2bin")) {
+                } else if (action.contains("base2bin")) {
                     String base2bin = sc.nextLine();
                     int base = sc.nextInt();
                     System.out.println(literalHash.base2bin(base2bin, base));
-                } else if (action.equals("base2base")) {
+                } else if (action.contains("base2base")) {
                     String base2base = sc.nextLine();
                     int base = sc.nextInt();
                     int desiredbase = sc.nextInt();
                     System.out.println(literalHash.base2base(base2base, base, desiredbase));
-                } else if (action.equals("dec2base")) {
+                } else if (action.contains("dec2base")) {
                     BigInteger dec2base = new BigInteger(sc.nextLine());
                     int base = sc.nextInt();
                     System.out.println(literalHash.dec2base(dec2base, base));
-                } else if (action.equals("hex2base")) {
+                } else if (action.contains("hex2base")) {
                     String hex2base = sc.nextLine();
                     int base = sc.nextInt();
                     System.out.println(literalHash.hex2base(hex2base, base));
-                } else if (action.equals("bin2base")) {
+                } else if (action.contains("bin2base")) {
                     String bin2base = sc.nextLine();
                     int base = sc.nextInt();
                     System.out.println(literalHash.bin2base(bin2base, base));
-                } else if (action.equals("gpugrlc") && gpugrlc == true) {
+                } else if (action.contains("gpugrlc") && gpugrlc == true) {
                     literalHash.gpugrlc();
                     gpugrlc = false;
                     if (gpugrlc == false)
@@ -136,13 +160,13 @@ class Tools implements Runnable, KeyListener {
                     else
                         System.out.println("cpu.state=1");
 
-                } else if (action.equals("bibbafy")) {
+                } else if (action.contains("bibbafy")) {
                     String bibbafy = sc.nextLine();
                     System.out.println(literalHash.bibbafy(bibbafy));
-                } else if (action.equals("discordbibbafy")) {
+                } else if (action.contains("discordbibbafy")) {
                     String discordbibbafy = sc.nextLine();
                     System.out.println(literalHash.discordbibbafy(discordbibbafy));
-                } else if (action.equals("cpugrlc") && cpugrlc == true) {
+                } else if (action.contains("cpugrlc") && cpugrlc == true) {
                     literalHash.cpugrlc();
                     cpugrlc = false;
                     if (gpugrlc == false)
@@ -153,7 +177,7 @@ class Tools implements Runnable, KeyListener {
                         System.out.println("this.state=0");
                     else
                         System.out.println("this.state=1");
-                } else if (action.equals("getstate")) {
+                } else if (action.contains("getstate")) {
                     if (gpugrlc == false)
                         System.out.println("gpu.state=0");
                     else
@@ -162,63 +186,63 @@ class Tools implements Runnable, KeyListener {
                         System.out.println("cpu.state=0");
                     else
                         System.out.println("cpu.state=1");
-                } else if (action.equals("setfalse")) {
+                } else if (action.contains("setfalse")) {
                     cpugrlc = false;
                     gpugrlc = false;
-                } else if (action.equals("getepoch")) {
+                } else if (action.contains("getepoch")) {
                     System.out.println(System.currentTimeMillis());
-                } else if (action.equals("leetify")) {
+                } else if (action.contains("leetify")) {
                     String leetify = sc.nextLine();
                     System.out.println(literalHash.leetify(leetify));
-                } else if (action.equals("getrandomstring")) {
+                } else if (action.contains("getrandomstring")) {
                     int size = sc.nextInt();
                     System.out.println(randomAlphaNumeric(size));
-                } else if (action.equals("throwexception")) {
+                } else if (action.contains("throwexception")) {
                     throw new TestException("This was thrown at request for debug purposes, the auto recovery system should kick in.\nYou should be able to still type commands if the program did not encounter any unknown errors.\nTL:DR DON'T FREAK OUT THE PROGRAM RECOVERED, IT IS STILL RUNNING.");
-                } else if (action.equals("dec2bin")) {
+                } else if (action.contains("dec2bin")) {
                     BigInteger dec2bin = new BigInteger(sc.nextLine());
                     System.out.println(literalHash.dec2bin(dec2bin));
-                } else if (action.equals("hex2bin")) {
+                } else if (action.contains("hex2bin")) {
                     String hex2bin = sc.nextLine();
                     System.out.println(literalHash.hex2bin(hex2bin));
-                } else if (action.equals("hex2dec")) {
+                } else if (action.contains("hex2dec")) {
                     String hex2dec = sc.nextLine();
                     System.out.println(literalHash.hex2dec(hex2dec));
-                } else if (action.equals("directhash")) {
+                } else if (action.contains("directhash")) {
                     String literalhash = sc.nextLine();
                     System.out.println(literalHash.hash(literalhash));
-                } else if (action.equals("dec2hex")) {
+                } else if (action.contains("dec2hex")) {
                     try {
                         BigInteger dec2hex = new BigInteger(sc.nextLine());
                         System.out.println(literalHash.dec2hex(dec2hex));
                     } catch (InputMismatchException e) {
                         System.out.println("Unrecognizable input");
                     }
-                } else if (action.equals("bin2dec")) {
+                } else if (action.contains("bin2dec")) {
                     String bin2dec = sc.nextLine();
                     System.out.println(literalHash.bin2dec(bin2dec));
-                } else if (action.equals("bin2hex")) {
+                } else if (action.contains("bin2hex")) {
                     String bin2hex = sc.nextLine();
                     System.out.println(literalHash.bin2hex(bin2hex));
-                } else if (action.equals("checktoken")) {
+                } else if (action.contains("checktoken")) {
                     System.out.println(checkToken());
-                } else if (action.equals("getpath")) {
+                } else if (action.contains("getpath")) {
                     System.out.println("Working Directory = " + System.getProperty("user.dir"));
                 }
-                else if (action.equals("getos"))
+                else if (action.contains("getos"))
                 {
                     System.out.println(getOsName());
                 }
-                else if (action.equals("systeminfo"))
+                else if (action.contains("systeminfo"))
                 {
                     getSystemInfo();
                 }
-                else if (action.equals("gethexstring"))
+                else if (action.contains("gethexstring"))
                 {
                     int size = sc.nextInt();
                     System.out.println(randomHex(size));
                 }
-                if (Arrays.asList(stopwords).contains(action) || Arrays.asList(helpwords).contains(action) || action.equals("gethexstring") || action.equals("systeminfo") || action.equals("getos") || action.equals("getpath") || action.equals("leetify") || action.equals("getrandomstring") || action.equals("checktoken") || action.equals("mineblock") || action.equals("throwexception") || action.equals("getrandomhash") || action.equals("getepoch") || action.equals("dec2hex") || action.equals("bin2dec") || action.equals("bin2hex") || (action.equals("clear") || action.equals("hex2dec") || action.equals("Clear") || action.equals("dec2bin") || action.equals("hex2bin") || action.equals("directhash") || action.equals("secretfunctions") || action.equals("gpugrlc") || action.equals("cpugrlc") || action.equals("getstate") || action.equals("setfalse") || action.equals("bibbafy") || action.equals("discordbibbafy") || action.equals("base2dec") || action.equals("base2hex") || action.equals("base2bin") || action.equals("base2base") || action.equals("dec2base") || action.equals("hex2base") || action.equals("bin2base")) || action.equals("getcredits")) {
+                if (Arrays.asList(stopwords).contains(action) || Arrays.asList(helpwords).contains(action) || action.contains("debughash") || action.contains("gethexstring") || action.contains("systeminfo") || action.contains("getos") || action.contains("getpath") || action.contains("leetify") || action.contains("getrandomstring") || action.contains("checktoken") || action.contains("mineblock") || action.contains("throwexception") || action.contains("getrandomhash") || action.contains("getepoch") || action.contains("dec2hex") || action.contains("bin2dec") || action.contains("bin2hex") || (action.contains("clear") || action.contains("hex2dec") || action.contains("Clear") || action.contains("dec2bin") || action.contains("hex2bin") || action.contains("directhash") || action.contains("secretfunctions") || action.contains("gpugrlc") || action.contains("cpugrlc") || action.contains("getstate") || action.contains("setfalse") || action.contains("bibbafy") || action.contains("discordbibbafy") || action.contains("base2dec") || action.contains("base2hex") || action.contains("base2bin") || action.contains("base2base") || action.contains("dec2base") || action.contains("hex2base") || action.contains("bin2base")) || action.contains("getcredits")) {
                     if (Arrays.asList(helpwords).contains(action)) {
                         System.out.println("help-help");
                         System.out.println("functions-help");
@@ -254,6 +278,7 @@ class Tools implements Runnable, KeyListener {
                         System.out.println("getpath-displays the path where the program was initialized");
                         System.out.println("getos-gives os name and architecture");
                         System.out.println("systeminfo-gives system info");
+                        System.out.println("debughash-shows debug info about getrandomhash");
                     }
                 } else
                 {
@@ -327,7 +352,18 @@ class Tools implements Runnable, KeyListener {
         newSalt = newSalt.substring(0, 15);
         return newSalt;
     }
-
+    private static String getDebugNewSalt(String oldSalt) {
+    	String rand = randomAlphaNumeric(256);
+    	System.out.println("randinit: "+rand);
+        String randomSalt = sha256("" + rand);
+        randomSalt = randomSalt.substring(0, 15);
+        System.out.println("Generated Salt: "+randomSalt);
+        String newSalt = sha256(oldSalt + randomSalt);
+        System.out.println(oldSalt+randomSalt+" sha256()--> "+sha256(oldSalt + randomSalt));
+        newSalt = newSalt.substring(0, 15);
+        System.out.println("Generated Salt: "+newSalt);
+        return newSalt;
+    }
     private static String getHash() {
         salt = sha256(getBase());
         salt = salt.substring(0, 15);
@@ -340,7 +376,25 @@ class Tools implements Runnable, KeyListener {
         finalHash = sha256(sha256(salt2 + finalHash + salt + hash1 + salt2));
         return finalHash;
     }
-
+    private static String getDebugHash() {
+    	String base = getBase();
+    	System.out.println("Base: "+ base);
+        salt = sha256(base);
+        System.out.println(base+" sha256()--> "+sha256(base));
+        salt = salt.substring(0, 15);
+        System.out.println("Generated Salt: "+salt);
+        hash1 = sha256(salt2 + salt + getBase() + salt2);
+        System.out.println(salt2 + salt + getBase() + salt2+" sha256()--> "+sha256(salt2 + salt + getBase() + salt2));
+        salt = getDebugNewSalt(salt);
+        salt2 = getDebugNewSalt(salt2);
+        finalHash = sha256(salt2 + salt + hash1 + sha256(getBase() + salt + salt2));
+        System.out.println(salt2 + salt + hash1 + sha256(getBase() + salt + salt2)+" sha256()--> "+salt2 + salt + hash1 + sha256(getBase() + salt + salt2));
+        salt = getDebugNewSalt(salt);
+        salt2 = getDebugNewSalt(salt2);
+        finalHash = sha256(sha256(salt2 + finalHash + salt + hash1 + salt2));
+        System.out.println(sha256(salt2 + finalHash + salt + hash1 + salt2)+" sha256()--> "+sha256(sha256(salt2 + finalHash + salt + hash1 + salt2)));
+        return finalHash;
+    }
     public static String getBase() {
         return randomAlphaNumeric(64);
     }
@@ -415,7 +469,10 @@ class Tools implements Runnable, KeyListener {
                     System.out.print(" EH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / eh));
                 } else
                     System.out.print(" H/s: " + (ct / (timeDiff / 1000)));
-                System.out.print((char) 13);
+              if(!lbl)
+              {
+              System.out.print((char) 13);
+              }
                 refreshScreen = false;
             }
             if ((timeDiff / 1000) / 60 >= 2) {
@@ -444,6 +501,7 @@ class Tools implements Runnable, KeyListener {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+          lbl = false;
         }
 
     }
