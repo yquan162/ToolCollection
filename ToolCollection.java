@@ -283,11 +283,14 @@ class Tools implements Runnable, KeyListener {
                 } else
                 {
                     System.out.println("'"+action+"'"+" does not seem to exist, to see a list of commands, type 'help'.");
+                  if(!action.equals(""))
+                  {
                     System.out.println("Suggestions: ");
                     for(String i:errorwords)
                     	if(i.contains(action))
                     		System.out.println(i);
-                }
+                  }
+                  }
                 if (Arrays.asList(stopwords).contains(action)) {
                     System.out.println("Are you sure? [Y/N]");
                     char stop = sc.nextLine().charAt(0);
@@ -473,6 +476,8 @@ class Tools implements Runnable, KeyListener {
               {
               System.out.print((char) 13);
               }
+              else
+                System.out.println();
                 refreshScreen = false;
             }
             if ((timeDiff / 1000) / 60 >= 2) {
