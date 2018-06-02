@@ -54,6 +54,7 @@ class Tools implements Runnable, KeyListener {
     private static boolean gpugrlc = false;
     private static boolean cpugrlc = false;
     private static boolean lbl = false;
+    private static int zeros = 0;
     public static String placeholder = System.getProperty("user.dir");
     public static String path = placeholder.replaceAll("/", "\\");
     private static CommieAI ai = new CommieAI();
@@ -112,6 +113,8 @@ class Tools implements Runnable, KeyListener {
                  {
                    if(action.contains("-lbl"))
                      lbl = true;
+                   if(action.contains("-zeros"))
+                       zeros = 1;
                     mineBlock();
                  }
                    else if (action.contains("secretfunctions")) {
@@ -420,6 +423,8 @@ class Tools implements Runnable, KeyListener {
       return false;
     }
     public static void mineBlock() throws InterruptedException, IOException {
+        String zero = "0000000000000000000000000000000000000000000000000000000000000000";
+        String target;
         DecimalFormat df = new DecimalFormat("#.###");
         Scanner sc = new Scanner(System.in);
         int diff = sc.nextInt();
@@ -429,7 +434,12 @@ class Tools implements Runnable, KeyListener {
         if (diff > 64)
             diff = 64;
         hashInit();
-        String target = getHash().substring(mRange - diff, mRange);
+        if(zeros==1)
+        {
+            target = zero.substring((zero.length()-1)-diff+1);
+        }
+        else
+        target = getHash().substring(mRange - diff, mRange);
         String current = getHash();
         long startTime = System.currentTimeMillis();
         long callTime = startTime;
@@ -445,12 +455,15 @@ class Tools implements Runnable, KeyListener {
         prevTime = timeDiff;
         boolean refreshScreen = false;
         new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+        switch(zeros)
+          {
+          case 0:
         while (!(current.contains(target)) && !stop) {
             ct++;
             if ((timeDiff - prevTime) > 256) {
                 hashesps = (ct / (timeDiff / 1000));
                 refreshScreen = true;
-                System.out.print("Target: 0x" + target + " Result: " + current + " Diff: " + literalHash.dec2hex(new BigInteger(diff + "")));
+                System.out.print("Target: " + target + " Result: " + current + " Diff: " + literalHash.dec2hex(new BigInteger(diff + "")));
             }
             hashInit();
             current = getHash();
@@ -485,10 +498,53 @@ class Tools implements Runnable, KeyListener {
                 startTime = System.currentTimeMillis();
             }
         }
+          break;
+          case 1:
+            while (!(current.substring(0,diff).equals(target)) && !stop) {
+            ct++;
+            if ((timeDiff - prevTime) > 256) {
+                hashesps = (ct / (timeDiff / 1000));
+                refreshScreen = true;
+                System.out.print("Target: " + target + " Result: " + current + " Diff: " + literalHash.dec2hex(new BigInteger(diff + "")));
+            }
+            hashInit();
+            current = getHash();
+            timeDiff = (new Date()).getTime() - startTime;
+            if ((timeDiff / 1000) < 1)
+                timeDiff = 1000;
+            if ((refreshScreen)) {
+                if (hashesps > kh && !(hashesps > mh)) {
+                    System.out.print(" KH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / kh));
+                } else if (hashesps > mh && !(hashesps > gh)) {
+                    System.out.print(" MH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / mh));
+                } else if (hashesps > gh && (hashesps > th)) {
+                    System.out.print(" GH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / gh));
+                } else if (hashesps > th && !(hashesps > ph)) {
+                    System.out.print(" TH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / th));
+                } else if (hashesps > ph && !(hashesps > eh)) {
+                    System.out.print(" PH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / ph));
+                } else if (hashesps > eh) {
+                    System.out.print(" EH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / eh));
+                } else
+                    System.out.print(" H/s: " + (ct / (timeDiff / 1000)));
+              if(!lbl)
+              {
+              System.out.print((char) 13);
+              }
+              else
+                System.out.println();
+                refreshScreen = false;
+            }
+            if ((timeDiff / 1000) / 60 >= 2) {
+                ct = 0;
+                startTime = System.currentTimeMillis();
+            }
+        }
+      }
         if (!stop) {
             double timeMins = ((((double) System.currentTimeMillis() - (double) callTime) / (double) 1000) / (double) 60);
             new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-            System.out.println("Valid Hash: " + current + " Target: 0x" + target + " Diff: " + literalHash.dec2hex(new BigInteger(diff + "")) + " Time until solution in minutes: " + df.format(timeMins));
+            System.out.println("Valid Hash: " + current + " Target: " + target + " Diff: " + literalHash.dec2hex(new BigInteger(diff + "")) + " Time until solution in minutes: " + df.format(timeMins));
             System.out.println("CLM Owed: " + (((double) diff / (double) 64) * (diff * ((((double) System.currentTimeMillis() - (double) callTime) / (double) 1000) / (double) 60))) + "\n");
             System.out.println("Payment Token: " +sha256(target).substring(0, 33)+ sha256(current.substring(0, 33) + sha256(diff + "") + sha256(df.format(timeMins) + "") + current.substring(33))+sha256(target).substring(33)+ " Do not lose this or your CLM cannot be rewarded.");
             //(Diff/64(Diff*ElapsedTime)) = CLM Owed
