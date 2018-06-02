@@ -54,6 +54,7 @@ class Tools implements Runnable, KeyListener {
     private static boolean gpugrlc = false;
     private static boolean cpugrlc = false;
     private static boolean lbl = false;
+    private static boolean clearall = false;
     private static int zeros = 0;
     public static String placeholder = System.getProperty("user.dir");
     public static String path = placeholder.replaceAll("/", "\\");
@@ -86,12 +87,17 @@ class Tools implements Runnable, KeyListener {
                 Scanner sc = new Scanner(System.in);
                 String action = sc.nextLine();
                 action = action.toLowerCase();
+                if(action.contains("clear")&&action.contains("-all"))
+                  clearall=true;
+                if(action.contains("-showlogo"))
+                  clearall=false;
                 String[] aiwords = action.split(" ");
                 for (String keyword : aiwords) {
                     ai.listen(keyword);
                 }
-                if ((action.contains("clear") || action.contains("Clear"))) {
+                if ((action.contains("clear"))) {
                     new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+                  if(!clearall)
                     ASCIIDL.ASCII("YTool v0.1", false);
                 } else if (action.contains("getrandomhash")) {
                     if (!(action.equals(null))) {
