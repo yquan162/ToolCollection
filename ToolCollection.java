@@ -69,10 +69,10 @@ class Tools implements Runnable, KeyListener {
         salt2 = salt2.substring(0, 15);
     }
     public static void debugInit(){
-    	String randomalp = randomAlphaNumeric(64);
-    	System.out.println("init rand: "+randomalp);
-    	salt2 = salt2 + sha256(randomalp);
-    	System.out.println(randomalp+" sha256()--> "+sha256(randomalp));
+        String randomalp = randomAlphaNumeric(64);
+        System.out.println("init rand: "+randomalp);
+        salt2 = salt2 + sha256(randomalp);
+        System.out.println(randomalp+" sha256()--> "+sha256(randomalp));
         salt2 = sha256(salt2);
         System.out.println(salt2+" sha256()--> "+sha256(salt2));
         salt2 = salt2.substring(0, 15);
@@ -88,17 +88,17 @@ class Tools implements Runnable, KeyListener {
                 String action = sc.nextLine();
                 action = action.toLowerCase();
                 if(action.contains("clear")&&action.contains("-all"))
-                  clearall=true;
+                    clearall=true;
                 if(action.contains("-showlogo"))
-                  clearall=false;
+                    clearall=false;
                 String[] aiwords = action.split(" ");
                 for (String keyword : aiwords) {
                     ai.listen(keyword);
                 }
                 if ((action.contains("clear"))) {
                     new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-                  if(!clearall)
-                    ASCIIDL.ASCII("YTool v0.1", false);
+                    if(!clearall)
+                        ASCIIDL.ASCII("YTool v0.1", false);
                 } else if (action.contains("getrandomhash")) {
                     if (!(action.equals(null))) {
                         salt2 = salt2 + action;
@@ -108,22 +108,22 @@ class Tools implements Runnable, KeyListener {
                 }
                 else if(action.contains("debughash"))
                 {
-                	if (!(action.equals(null))) {
+                    if (!(action.equals(null))) {
                         salt2 = salt2 + action;
                     }
                     System.out.println("init:" + salt2);
                     debugInit();
                     System.out.println(getDebugHash());
                 }
-                 else if (action.contains("mineblock"))
-                 {
-                   if(action.contains("-lbl"))
-                     lbl = true;
-                   if(action.contains("-zeros"))
-                       zeros = 1;
+                else if (action.contains("mineblock"))
+                {
+                    if(action.contains("-lbl"))
+                        lbl = true;
+                    if(action.contains("-zeros"))
+                        zeros = 1;
                     mineBlock();
-                 }
-                   else if (action.contains("secretfunctions")) {
+                }
+                else if (action.contains("secretfunctions")) {
                     gpugrlc = true;
                     cpugrlc = true;
                 } else if (action.contains("getcredits")) {
@@ -292,14 +292,14 @@ class Tools implements Runnable, KeyListener {
                 } else
                 {
                     System.out.println("'"+action+"'"+" does not seem to exist, to see a list of commands, type 'help'.");
-                  if(!action.equals(""))
-                  {
-                    System.out.println("Suggestions: ");
-                    for(String i:errorwords)
-                    	if(i.contains(action))
-                    		System.out.println(i);
-                  }
-                  }
+                    if(!action.equals(""))
+                    {
+                        System.out.println("Suggestions: ");
+                        for(String i:errorwords)
+                            if(i.contains(action))
+                                System.out.println(i);
+                    }
+                }
                 if (Arrays.asList(stopwords).contains(action)) {
                     System.out.println("Are you sure? [Y/N]");
                     char stop = sc.nextLine().charAt(0);
@@ -365,8 +365,8 @@ class Tools implements Runnable, KeyListener {
         return newSalt;
     }
     private static String getDebugNewSalt(String oldSalt) {
-    	String rand = randomAlphaNumeric(256);
-    	System.out.println("randinit: "+rand);
+        String rand = randomAlphaNumeric(256);
+        System.out.println("randinit: "+rand);
         String randomSalt = sha256("" + rand);
         randomSalt = randomSalt.substring(0, 15);
         System.out.println("Generated Salt: "+randomSalt);
@@ -389,8 +389,8 @@ class Tools implements Runnable, KeyListener {
         return finalHash;
     }
     private static String getDebugHash() {
-    	String base = getBase();
-    	System.out.println("Base: "+ base);
+        String base = getBase();
+        System.out.println("Base: "+ base);
         salt = sha256(base);
         System.out.println(base+" sha256()--> "+sha256(base));
         salt = salt.substring(0, 15);
@@ -414,21 +414,21 @@ class Tools implements Runnable, KeyListener {
     {
         if(check.length()!=64&&check.length()!=128)
             return false;
-            Scanner scanner = new Scanner("processedtx.txt");
+        Scanner scanner = new Scanner("processedtx.txt");
 
-            //now read the file line by line...
-            int lineNum = 0;
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                lineNum++;
-                if(line.contains(check)) {
-                    System.out.println("Entry is already processed entry no. " +lineNum);
-                    return true;
-                }
+        //now read the file line by line...
+        int lineNum = 0;
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            lineNum++;
+            if(line.contains(check)) {
+                System.out.println("Entry is already processed entry no. " +lineNum);
+                return true;
             }
-      return false;
+        }
+        return false;
     }
-    public static void mineBlock() throws InterruptedException, IOException {
+    public static void mineBlock() throws InterruptedException, IOException, AssetGetFailException {
         String zero = "0000000000000000000000000000000000000000000000000000000000000000";
         String target;
         DecimalFormat df = new DecimalFormat("#.###");
@@ -445,7 +445,7 @@ class Tools implements Runnable, KeyListener {
             target = zero.substring((zero.length()-1)-diff+1);
         }
         else
-        target = getHash().substring(mRange - diff, mRange);
+            target = getHash().substring(mRange - diff, mRange);
         String current = getHash();
         long startTime = System.currentTimeMillis();
         long callTime = startTime;
@@ -462,93 +462,101 @@ class Tools implements Runnable, KeyListener {
         boolean refreshScreen = false;
         new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
         switch(zeros)
-          {
-          case 0:
-        while (!(current.contains(target)) && !stop) {
-            ct++;
-            if ((timeDiff - prevTime) > 256) {
-                hashesps = (ct / (timeDiff / 1000));
-                refreshScreen = true;
-                System.out.print("Target: " + target + " Result: " + current + " Diff: " + literalHash.dec2hex(new BigInteger(diff + "")));
-            }
-            hashInit();
-            current = getHash();
-            timeDiff = (new Date()).getTime() - startTime;
-            if ((timeDiff / 1000) < 1)
-                timeDiff = 1000;
-            if ((refreshScreen)) {
-                if (hashesps > kh && !(hashesps > mh)) {
-                    System.out.print(" KH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / kh));
-                } else if (hashesps > mh && !(hashesps > gh)) {
-                    System.out.print(" MH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / mh));
-                } else if (hashesps > gh && (hashesps > th)) {
-                    System.out.print(" GH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / gh));
-                } else if (hashesps > th && !(hashesps > ph)) {
-                    System.out.print(" TH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / th));
-                } else if (hashesps > ph && !(hashesps > eh)) {
-                    System.out.print(" PH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / ph));
-                } else if (hashesps > eh) {
-                    System.out.print(" EH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / eh));
-                } else
-                    System.out.print(" H/s: " + (ct / (timeDiff / 1000)));
-              if(!lbl)
-              {
-              System.out.print((char) 13);
-              }
-              else
-                System.out.println();
-                refreshScreen = false;
-            }
-            if ((timeDiff / 1000) / 60 >= 2) {
-                ct = 0;
-                startTime = System.currentTimeMillis();
-            }
+        {
+            case 0:
+                while (!(current.contains(target)) && !stop) {
+                    ct++;
+                    if ((timeDiff - prevTime) > 256) {
+                        hashesps = (ct / (timeDiff / 1000));
+                        refreshScreen = true;
+                        System.out.print("Target: " + target + " Result: " + current + " Diff: " + literalHash.dec2hex(new BigInteger(diff + "")));
+                    }
+                    hashInit();
+                    current = getHash();
+                    timeDiff = (new Date()).getTime() - startTime;
+                    if ((timeDiff / 1000) < 1)
+                        timeDiff = 1000;
+                    if ((refreshScreen)) {
+                        if (hashesps > kh && !(hashesps > mh)) {
+                            System.out.print(" KH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / kh));
+                        } else if (hashesps > mh && !(hashesps > gh)) {
+                            System.out.print(" MH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / mh));
+                        } else if (hashesps > gh && (hashesps > th)) {
+                            System.out.print(" GH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / gh));
+                        } else if (hashesps > th && !(hashesps > ph)) {
+                            System.out.print(" TH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / th));
+                        } else if (hashesps > ph && !(hashesps > eh)) {
+                            System.out.print(" PH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / ph));
+                        } else if (hashesps > eh) {
+                            System.out.print(" EH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / eh));
+                        } else
+                            System.out.print(" H/s: " + (ct / (timeDiff / 1000)));
+                        if(!lbl)
+                        {
+                            System.out.print((char) 13);
+                        }
+                        else
+                            System.out.println();
+                        refreshScreen = false;
+                    }
+                    if ((timeDiff / 1000) / 60 >= 2) {
+                        ct = 0;
+                        startTime = System.currentTimeMillis();
+                    }
+                }
+                break;
+            case 1:
+                while (!(current.substring(0,diff).equals(target)) && !stop) {
+                    ct++;
+                    if ((timeDiff - prevTime) > 256) {
+                        hashesps = (ct / (timeDiff / 1000));
+                        refreshScreen = true;
+                        System.out.print("Target: " + target + " Result: " + current + " Diff: " + literalHash.dec2hex(new BigInteger(diff + "")));
+                    }
+                    hashInit();
+                    current = getHash();
+                    timeDiff = (new Date()).getTime() - startTime;
+                    if ((timeDiff / 1000) < 1)
+                        timeDiff = 1000;
+                    if ((refreshScreen)) {
+                        if (hashesps > kh && !(hashesps > mh)) {
+                            System.out.print(" KH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / kh));
+                        } else if (hashesps > mh && !(hashesps > gh)) {
+                            System.out.print(" MH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / mh));
+                        } else if (hashesps > gh && (hashesps > th)) {
+                            System.out.print(" GH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / gh));
+                        } else if (hashesps > th && !(hashesps > ph)) {
+                            System.out.print(" TH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / th));
+                        } else if (hashesps > ph && !(hashesps > eh)) {
+                            System.out.print(" PH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / ph));
+                        } else if (hashesps > eh) {
+                            System.out.print(" EH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / eh));
+                        } else
+                            System.out.print(" H/s: " + (ct / (timeDiff / 1000)));
+                        if(!lbl)
+                        {
+                            System.out.print((char) 13);
+                        }
+                        else
+                            System.out.println();
+                        refreshScreen = false;
+                    }
+                    if ((timeDiff / 1000) / 60 >= 2) {
+                        ct = 0;
+                        startTime = System.currentTimeMillis();
+                    }
+                }
         }
-          break;
-          case 1:
-            while (!(current.substring(0,diff).equals(target)) && !stop) {
-            ct++;
-            if ((timeDiff - prevTime) > 256) {
-                hashesps = (ct / (timeDiff / 1000));
-                refreshScreen = true;
-                System.out.print("Target: " + target + " Result: " + current + " Diff: " + literalHash.dec2hex(new BigInteger(diff + "")));
-            }
-            hashInit();
-            current = getHash();
-            timeDiff = (new Date()).getTime() - startTime;
-            if ((timeDiff / 1000) < 1)
-                timeDiff = 1000;
-            if ((refreshScreen)) {
-                if (hashesps > kh && !(hashesps > mh)) {
-                    System.out.print(" KH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / kh));
-                } else if (hashesps > mh && !(hashesps > gh)) {
-                    System.out.print(" MH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / mh));
-                } else if (hashesps > gh && (hashesps > th)) {
-                    System.out.print(" GH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / gh));
-                } else if (hashesps > th && !(hashesps > ph)) {
-                    System.out.print(" TH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / th));
-                } else if (hashesps > ph && !(hashesps > eh)) {
-                    System.out.print(" PH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / ph));
-                } else if (hashesps > eh) {
-                    System.out.print(" EH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / eh));
-                } else
-                    System.out.print(" H/s: " + (ct / (timeDiff / 1000)));
-              if(!lbl)
-              {
-              System.out.print((char) 13);
-              }
-              else
-                System.out.println();
-                refreshScreen = false;
-            }
-            if ((timeDiff / 1000) / 60 >= 2) {
-                ct = 0;
-                startTime = System.currentTimeMillis();
-            }
-        }
-      }
         if (!stop) {
-            double timeMins = ((((double) System.currentTimeMillis() - (double) callTime) / (double) 1000) / (double) 60);
+          double timeMins = ((((double) System.currentTimeMillis() - (double) callTime) / (double) 1000) / (double) 60);
+          new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            try {
+                loadingBar();
+            }
+            catch (Exception e)
+            {
+                throw new AssetGetFailException("UI Failed to Load");
+            }
             new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             System.out.println("Valid Hash: " + current + " Target: " + target + " Diff: " + literalHash.dec2hex(new BigInteger(diff + "")) + " Time until solution in minutes: " + df.format(timeMins));
             System.out.println("CLM Owed: " + (((double) diff / (double) 64) * (diff * ((((double) System.currentTimeMillis() - (double) callTime) / (double) 1000) / (double) 60))) + "\n");
@@ -568,7 +576,7 @@ class Tools implements Runnable, KeyListener {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-          lbl = false;
+            lbl = false;
         }
 
     }
@@ -585,36 +593,59 @@ class Tools implements Runnable, KeyListener {
         token = sc.nextLine();
         if (validHash.length() != 64)
         {
-          System.out.println("short/long hash");
+            System.out.println("short/long hash");
             return false;
         }
         if (token.length() != 128)
         {
-          System.out.println("short/long token");
+            System.out.println("short/long token");
             return false;
         }
         if (target.length()<diff)
         {
-          System.out.println("Invalid target given diff");
+            System.out.println("Invalid target given diff");
             return false;
         }
         if(isProcessed(validHash)==true||isProcessed(token)==true)
         {
-          System.out.println("already processed");
-          return true;
+            System.out.println("already processed");
+            return true;
         }
-        
-          if(!(isProcessed(validHash)==true||isProcessed(token)==true)&&token.equals(sha256(target).substring(0, 33)+sha256(validHash.substring(0, 33) + sha256(diff + "") + sha256(time + "") + validHash.substring(33))+sha256(target).substring(33))){
-             try (BufferedWriter bw1 = new BufferedWriter(new FileWriter(path + "\\processedtx.txt", true))) {
-             	bw1.write(validHash+" "+token);
-             	bw1.newLine();
-             	return true;
-             }
-             catch (IOException e) {
+
+        if(!(isProcessed(validHash)==true||isProcessed(token)==true)&&token.equals(sha256(target).substring(0, 33)+sha256(validHash.substring(0, 33) + sha256(diff + "") + sha256(time + "") + validHash.substring(33))+sha256(target).substring(33))){
+            try (BufferedWriter bw1 = new BufferedWriter(new FileWriter(path + "\\processedtx.txt", true))) {
+                bw1.write(validHash+" "+token);
+                bw1.newLine();
+                return true;
+            }
+            catch (IOException e) {
                 e.printStackTrace();
             }
-          }
-          	return false;
+        }
+        return false;
+    }
+    public static void loadingBar() throws Exception
+    {
+        long time;
+        int percent = 0;
+        char[] bar = new char[(int)((Math.random()*75)+75)];
+        bar[0]='|'; bar[bar.length-1]='|';
+        for (int i = 1; i < bar.length-1; i++) {
+            bar[i]=' ';
+        }
+        for (int i = 1; i < bar.length-1; i++) {
+            percent=(int) (i*(100.0/(double)bar.length));
+            if(bar[i]==' ')
+                bar[i]='>';
+            System.out.print(percent);
+            System.out.print(new String(bar)+"Loading UI asset: "+getNewSalt(""));
+             time= (long)((Math.random()*384)+1);
+          long start = System.currentTimeMillis();
+          while(start >= System.currentTimeMillis() - time); // do nothing
+          new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+          
+        }
+
     }
     public static String getOs()
     {
@@ -630,28 +661,28 @@ class Tools implements Runnable, KeyListener {
         return getOs()+" "+architecture;
     }
     public static void getSystemInfo() {
-    System.out.println("Available processors (cores): " + 
-        Runtime.getRuntime().availableProcessors());
+        System.out.println("Available processors (cores): " +
+                Runtime.getRuntime().availableProcessors());
 
-    System.out.println("Free memory (bytes): " + 
-        Runtime.getRuntime().freeMemory());
+        System.out.println("Free memory (bytes): " +
+                Runtime.getRuntime().freeMemory());
 
-    long maxMemory = Runtime.getRuntime().maxMemory();
-    System.out.println("Maximum memory (bytes): " + 
-        (maxMemory == Long.MAX_VALUE ? "no limit" : maxMemory));
+        long maxMemory = Runtime.getRuntime().maxMemory();
+        System.out.println("Maximum memory (bytes): " +
+                (maxMemory == Long.MAX_VALUE ? "no limit" : maxMemory));
 
-    System.out.println("Total memory available to JVM (bytes): " + 
-        Runtime.getRuntime().totalMemory());
+        System.out.println("Total memory available to JVM (bytes): " +
+                Runtime.getRuntime().totalMemory());
 
-    File[] roots = File.listRoots();
+        File[] roots = File.listRoots();
 
-    for (File root : roots) {
-      System.out.println("File system root: " + root.getAbsolutePath());
-      System.out.println("Total space (bytes): " + root.getTotalSpace());
-      System.out.println("Free space (bytes): " + root.getFreeSpace());
-      System.out.println("Usable space (bytes): " + root.getUsableSpace());
+        for (File root : roots) {
+            System.out.println("File system root: " + root.getAbsolutePath());
+            System.out.println("Total space (bytes): " + root.getTotalSpace());
+            System.out.println("Free space (bytes): " + root.getFreeSpace());
+            System.out.println("Usable space (bytes): " + root.getUsableSpace());
+        }
     }
-  }
     @Override
     public void run() {
         try {
@@ -911,6 +942,12 @@ class Recovery {
 
 class TestException extends Exception {
     public TestException(String s) {
+        // Call constructor of parent Exception
+        super(s);
+    }
+}
+class AssetGetFailException extends Exception {
+    public AssetGetFailException(String s) {
         // Call constructor of parent Exception
         super(s);
     }
