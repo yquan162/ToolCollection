@@ -45,8 +45,10 @@ class Tools implements Runnable, KeyListener {
     private static final String HEX_STRING = "0123456789abcdef";
     public static String[] stopwords = {"exit", "Exit", "break", "Break", "stop", "Stop", "end", "End", "terminate", "Terminate"};
     public static String[] helpwords = {"help", "Help", "functions", "Functions"};
-    public static String[] errorwords = {"debughash","help", "functions","exit", "break", "stop", "end",  "terminate", "gethexstring" , "systeminfo" , "getos" , "getpath" , "leetify" , "getrandomstring" , "checktoken" , "mineblock" , "throwexception" , "getrandomhash" , "getepoch" , "dec2hex" , "bin2dec" , "bin2hex" , "clear" , "hex2dec" , "Clear" , "dec2bin" , "hex2bin" , "directhash" , "secretfunctions" , "gpugrlc" , "cpugrlc" , "getstate" , "setfalse" , "bibbafy" , "discordbibbafy" , "base2dec" , "base2hex" , "base2bin" , "base2base" , "dec2base" , "hex2base" , "bin2base" , "getcredits"};
+    public static String[] errorwords = {"debughash", "help", "functions", "exit", "break", "stop", "end", "terminate", "gethexstring", "systeminfo", "getos", "getpath", "leetify", "getrandomstring", "checktoken", "mineblock", "throwexception", "getrandomhash", "getepoch", "dec2hex", "bin2dec", "bin2hex", "clear", "hex2dec", "Clear", "dec2bin", "hex2bin", "directhash", "secretfunctions", "gpugrlc", "cpugrlc", "getstate", "setfalse", "bibbafy", "discordbibbafy", "base2dec", "base2hex", "base2bin", "base2base", "dec2base", "hex2base", "bin2base", "getcredits"};
     public static boolean stop = false;
+    public static String placeholder = System.getProperty("user.dir");
+    public static String path = placeholder.replaceAll("/", "\\");
     private static String salt;
     private static String salt2;
     private static String hash1;
@@ -56,8 +58,6 @@ class Tools implements Runnable, KeyListener {
     private static boolean lbl = false;
     private static boolean clearall = false;
     private static int zeros = 0;
-    public static String placeholder = System.getProperty("user.dir");
-    public static String path = placeholder.replaceAll("/", "\\");
     private static CommieAI ai = new CommieAI();
 
     public Tools() {
@@ -68,16 +68,18 @@ class Tools implements Runnable, KeyListener {
         salt2 = sha256(salt2);
         salt2 = salt2.substring(0, 15);
     }
-    public static void debugInit(){
+
+    public static void debugInit() {
         String randomalp = randomAlphaNumeric(64);
-        System.out.println("init rand: "+randomalp);
+        System.out.println("init rand: " + randomalp);
         salt2 = salt2 + sha256(randomalp);
-        System.out.println(randomalp+" sha256()--> "+sha256(randomalp));
+        System.out.println(randomalp + " sha256()--> " + sha256(randomalp));
         salt2 = sha256(salt2);
-        System.out.println(salt2+" sha256()--> "+sha256(salt2));
+        System.out.println(salt2 + " sha256()--> " + sha256(salt2));
         salt2 = salt2.substring(0, 15);
-        System.out.println("Generated Salt: "+salt2);
+        System.out.println("Generated Salt: " + salt2);
     }
+
     public static void Execute() throws Exception {
         int x = -1;
         int y = -1;
@@ -87,17 +89,17 @@ class Tools implements Runnable, KeyListener {
                 Scanner sc = new Scanner(System.in);
                 String action = sc.nextLine();
                 action = action.toLowerCase();
-                if(action.contains("clear")&&action.contains("-all"))
-                    clearall=true;
-                if(action.contains("-showlogo"))
-                    clearall=false;
+                if (action.contains("clear") && action.contains("-all"))
+                    clearall = true;
+                if (action.contains("-showlogo"))
+                    clearall = false;
                 String[] aiwords = action.split(" ");
                 for (String keyword : aiwords) {
                     ai.listen(keyword);
                 }
                 if ((action.contains("clear"))) {
                     new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-                    if(!clearall)
+                    if (!clearall)
                         ASCIIDL.ASCII("YTool v0.1", false);
                 } else if (action.contains("getrandomhash")) {
                     if (!(action.equals(null))) {
@@ -105,25 +107,20 @@ class Tools implements Runnable, KeyListener {
                     }
                     hashInit();
                     System.out.println(getHash());
-                }
-                else if(action.contains("debughash"))
-                {
+                } else if (action.contains("debughash")) {
                     if (!(action.equals(null))) {
                         salt2 = salt2 + action;
                     }
                     System.out.println("init:" + salt2);
                     debugInit();
                     System.out.println(getDebugHash());
-                }
-                else if (action.contains("mineblock"))
-                {
-                    if(action.contains("-lbl"))
+                } else if (action.contains("mineblock")) {
+                    if (action.contains("-lbl"))
                         lbl = true;
-                    if(action.contains("-zeros"))
+                    if (action.contains("-zeros"))
                         zeros = 1;
                     mineBlock();
-                }
-                else if (action.contains("secretfunctions")) {
+                } else if (action.contains("secretfunctions")) {
                     gpugrlc = true;
                     cpugrlc = true;
                 } else if (action.contains("getcredits")) {
@@ -237,17 +234,11 @@ class Tools implements Runnable, KeyListener {
                     System.out.println(checkToken());
                 } else if (action.contains("getpath")) {
                     System.out.println("Working Directory = " + System.getProperty("user.dir"));
-                }
-                else if (action.contains("getos"))
-                {
+                } else if (action.contains("getos")) {
                     System.out.println(getOsName());
-                }
-                else if (action.contains("systeminfo"))
-                {
+                } else if (action.contains("systeminfo")) {
                     getSystemInfo();
-                }
-                else if (action.contains("gethexstring"))
-                {
+                } else if (action.contains("gethexstring")) {
                     int size = sc.nextInt();
                     System.out.println(randomHex(size));
                 }
@@ -289,14 +280,12 @@ class Tools implements Runnable, KeyListener {
                         System.out.println("systeminfo-gives system info");
                         System.out.println("debughash-shows debug info about getrandomhash");
                     }
-                } else
-                {
-                    System.out.println("'"+action+"'"+" does not seem to exist, to see a list of commands, type 'help'.");
-                    if(!action.equals(""))
-                    {
+                } else {
+                    System.out.println("'" + action + "'" + " does not seem to exist, to see a list of commands, type 'help'.");
+                    if (!action.equals("")) {
                         System.out.println("Suggestions: ");
-                        for(String i:errorwords)
-                            if(i.contains(action))
+                        for (String i : errorwords)
+                            if (i.contains(action))
                                 System.out.println(i);
                     }
                 }
@@ -348,6 +337,7 @@ class Tools implements Runnable, KeyListener {
         }
         return builder.toString();
     }
+
     public static String randomHex(int count) {
         StringBuilder builder = new StringBuilder();
         while (count-- != 0) {
@@ -364,18 +354,20 @@ class Tools implements Runnable, KeyListener {
         newSalt = newSalt.substring(0, 15);
         return newSalt;
     }
+
     private static String getDebugNewSalt(String oldSalt) {
         String rand = randomAlphaNumeric(256);
-        System.out.println("randinit: "+rand);
+        System.out.println("randinit: " + rand);
         String randomSalt = sha256("" + rand);
         randomSalt = randomSalt.substring(0, 15);
-        System.out.println("Generated Salt: "+randomSalt);
+        System.out.println("Generated Salt: " + randomSalt);
         String newSalt = sha256(oldSalt + randomSalt);
-        System.out.println(oldSalt+randomSalt+" sha256()--> "+sha256(oldSalt + randomSalt));
+        System.out.println(oldSalt + randomSalt + " sha256()--> " + sha256(oldSalt + randomSalt));
         newSalt = newSalt.substring(0, 15);
-        System.out.println("Generated Salt: "+newSalt);
+        System.out.println("Generated Salt: " + newSalt);
         return newSalt;
     }
+
     private static String getHash() {
         salt = sha256(getBase());
         salt = salt.substring(0, 15);
@@ -388,31 +380,33 @@ class Tools implements Runnable, KeyListener {
         finalHash = sha256(sha256(salt2 + finalHash + salt + hash1 + salt2));
         return finalHash;
     }
+
     private static String getDebugHash() {
         String base = getBase();
-        System.out.println("Base: "+ base);
+        System.out.println("Base: " + base);
         salt = sha256(base);
-        System.out.println(base+" sha256()--> "+sha256(base));
+        System.out.println(base + " sha256()--> " + sha256(base));
         salt = salt.substring(0, 15);
-        System.out.println("Generated Salt: "+salt);
+        System.out.println("Generated Salt: " + salt);
         hash1 = sha256(salt2 + salt + getBase() + salt2);
-        System.out.println(salt2 + salt + getBase() + salt2+" sha256()--> "+sha256(salt2 + salt + getBase() + salt2));
+        System.out.println(salt2 + salt + getBase() + salt2 + " sha256()--> " + sha256(salt2 + salt + getBase() + salt2));
         salt = getDebugNewSalt(salt);
         salt2 = getDebugNewSalt(salt2);
         finalHash = sha256(salt2 + salt + hash1 + sha256(getBase() + salt + salt2));
-        System.out.println(salt2 + salt + hash1 + sha256(getBase() + salt + salt2)+" sha256()--> "+salt2 + salt + hash1 + sha256(getBase() + salt + salt2));
+        System.out.println(salt2 + salt + hash1 + sha256(getBase() + salt + salt2) + " sha256()--> " + salt2 + salt + hash1 + sha256(getBase() + salt + salt2));
         salt = getDebugNewSalt(salt);
         salt2 = getDebugNewSalt(salt2);
         finalHash = sha256(sha256(salt2 + finalHash + salt + hash1 + salt2));
-        System.out.println(sha256(salt2 + finalHash + salt + hash1 + salt2)+" sha256()--> "+sha256(sha256(salt2 + finalHash + salt + hash1 + salt2)));
+        System.out.println(sha256(salt2 + finalHash + salt + hash1 + salt2) + " sha256()--> " + sha256(sha256(salt2 + finalHash + salt + hash1 + salt2)));
         return finalHash;
     }
+
     public static String getBase() {
         return randomAlphaNumeric(64);
     }
-    public static boolean isProcessed(String check)
-    {
-        if(check.length()!=64&&check.length()!=128)
+
+    public static boolean isProcessed(String check) {
+        if (check.length() != 64 && check.length() != 128)
             return false;
         Scanner scanner = new Scanner("processedtx.txt");
 
@@ -421,13 +415,14 @@ class Tools implements Runnable, KeyListener {
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             lineNum++;
-            if(line.contains(check)) {
-                System.out.println("Entry is already processed entry no. " +lineNum);
+            if (line.contains(check)) {
+                System.out.println("Entry is already processed entry no. " + lineNum);
                 return true;
             }
         }
         return false;
     }
+
     public static void mineBlock() throws InterruptedException, IOException, AssetGetFailException {
         String zero = "0000000000000000000000000000000000000000000000000000000000000000";
         String target;
@@ -440,11 +435,9 @@ class Tools implements Runnable, KeyListener {
         if (diff > 64)
             diff = 64;
         hashInit();
-        if(zeros==1)
-        {
-            target = zero.substring((zero.length()-1)-diff+1);
-        }
-        else
+        if (zeros == 1) {
+            target = zero.substring((zero.length() - 1) - diff + 1);
+        } else
             target = getHash().substring(mRange - diff, mRange);
         String current = getHash();
         long startTime = System.currentTimeMillis();
@@ -461,8 +454,7 @@ class Tools implements Runnable, KeyListener {
         prevTime = timeDiff;
         boolean refreshScreen = false;
         new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-        switch(zeros)
-        {
+        switch (zeros) {
             case 0:
                 while (!(current.contains(target)) && !stop) {
                     ct++;
@@ -491,11 +483,9 @@ class Tools implements Runnable, KeyListener {
                             System.out.print(" EH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / eh));
                         } else
                             System.out.print(" H/s: " + (ct / (timeDiff / 1000)));
-                        if(!lbl)
-                        {
+                        if (!lbl) {
                             System.out.print((char) 13);
-                        }
-                        else
+                        } else
                             System.out.println();
                         refreshScreen = false;
                     }
@@ -506,7 +496,7 @@ class Tools implements Runnable, KeyListener {
                 }
                 break;
             case 1:
-                while (!(current.substring(0,diff).equals(target)) && !stop) {
+                while (!(current.substring(0, diff).equals(target)) && !stop) {
                     ct++;
                     if ((timeDiff - prevTime) > 256) {
                         hashesps = (ct / (timeDiff / 1000));
@@ -533,11 +523,9 @@ class Tools implements Runnable, KeyListener {
                             System.out.print(" EH/s: " + df.format(((double) ct / (double) (timeDiff / 1000)) / eh));
                         } else
                             System.out.print(" H/s: " + (ct / (timeDiff / 1000)));
-                        if(!lbl)
-                        {
+                        if (!lbl) {
                             System.out.print((char) 13);
-                        }
-                        else
+                        } else
                             System.out.println();
                         refreshScreen = false;
                     }
@@ -548,25 +536,26 @@ class Tools implements Runnable, KeyListener {
                 }
         }
         if (!stop) {
-          double timeMins = ((((double) System.currentTimeMillis() - (double) callTime) / (double) 1000) / (double) 60);
-          new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            double timeMins = ((((double) System.currentTimeMillis() - (double) callTime) / (double) 1000) / (double) 60);
+            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             try {
                 loadingBar();
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 throw new AssetGetFailException("UI Failed to Load");
             }
             new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             System.out.println("Valid Hash: " + current + " Target: " + target + " Diff: " + literalHash.dec2hex(new BigInteger(diff + "")) + " Time until solution in minutes: " + df.format(timeMins));
-            System.out.println("CLM Owed: " + (((double) diff / (double) 64) * (diff * ((((double) System.currentTimeMillis() - (double) callTime) / (double) 1000) / (double) 60))) + "\n");
-            System.out.println("Payment Token: " +sha256(target).substring(0, 33)+ sha256(current.substring(0, 33) + sha256(diff + "") + sha256(df.format(timeMins) + "") + current.substring(33))+sha256(target).substring(33)+ " Do not lose this or your CLM cannot be rewarded.");
+            if (zeros == 1)
+                System.out.println("CLM Owed: " + (((double) diff / ((double) 64 / (double) diff)) * (diff * ((((double) System.currentTimeMillis() - (double) callTime) / (double) 1000) / (double) 60))) + "\n");
+            else
+                System.out.println("CLM Owed: " + (((double) diff / (double) 64) * (diff * ((((double) System.currentTimeMillis() - (double) callTime) / (double) 1000) / (double) 60))) + "\n");
+            System.out.println("Payment Token: " + sha256(target).substring(0, 33) + sha256(current.substring(0, 33) + sha256(diff + "") + sha256(df.format(timeMins) + "") + current.substring(33)) + sha256(target).substring(33) + " Do not lose this or your CLM cannot be rewarded.");
             //(Diff/64(Diff*ElapsedTime)) = CLM Owed
             /*
              */
             try (BufferedWriter bw = new BufferedWriter(new FileWriter(path + "\\pendingtx.txt", true))) {
-                bw.write(current + " " + target + " " + literalHash.dec2hex(new BigInteger(diff + "")) + " " + df.format(timeMins)+" ");
-                bw.write(sha256(target).substring(0, 33)+sha256(current.substring(0, 33) + sha256(diff + "") + sha256(df.format(timeMins) + "") + current.substring(33))+sha256(target).substring(33));
+                bw.write(current + " " + target + " " + literalHash.dec2hex(new BigInteger(diff + "")) + " " + df.format(timeMins) + " ");
+                bw.write(sha256(target).substring(0, 33) + sha256(current.substring(0, 33) + sha256(diff + "") + sha256(df.format(timeMins) + "") + current.substring(33)) + sha256(target).substring(33));
                 bw.newLine();
                 bw.write("CLM Owed: " + (((double) diff / (double) 64) * (diff * ((((double) System.currentTimeMillis() - (double) callTime) / (double) 1000) / (double) 60))) + "\n");
                 bw.newLine();
@@ -577,6 +566,7 @@ class Tools implements Runnable, KeyListener {
                 e.printStackTrace();
             }
             lbl = false;
+            zeros = 0;
         }
 
     }
@@ -591,75 +581,72 @@ class Tools implements Runnable, KeyListener {
         double time = sc.nextDouble();
         String token = sc.nextLine();
         token = sc.nextLine();
-        if (validHash.length() != 64)
-        {
+        if (validHash.length() != 64) {
             System.out.println("short/long hash");
             return false;
         }
-        if (token.length() != 128)
-        {
+        if (token.length() != 128) {
             System.out.println("short/long token");
             return false;
         }
-        if (target.length()<diff)
-        {
+        if (target.length() < diff) {
             System.out.println("Invalid target given diff");
             return false;
         }
-        if(isProcessed(validHash)==true||isProcessed(token)==true)
-        {
+        if (isProcessed(validHash) == true || isProcessed(token) == true) {
             System.out.println("already processed");
             return true;
         }
 
-        if(!(isProcessed(validHash)==true||isProcessed(token)==true)&&token.equals(sha256(target).substring(0, 33)+sha256(validHash.substring(0, 33) + sha256(diff + "") + sha256(time + "") + validHash.substring(33))+sha256(target).substring(33))){
+        if (!(isProcessed(validHash) == true || isProcessed(token) == true) && token.equals(sha256(target).substring(0, 33) + sha256(validHash.substring(0, 33) + sha256(diff + "") + sha256(time + "") + validHash.substring(33)) + sha256(target).substring(33))) {
             try (BufferedWriter bw1 = new BufferedWriter(new FileWriter(path + "\\processedtx.txt", true))) {
-                bw1.write(validHash+" "+token);
+                bw1.write(validHash + " " + token);
                 bw1.newLine();
                 return true;
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         return false;
     }
-    public static void loadingBar() throws Exception
-    {
+
+    public static void loadingBar() throws Exception {
         long time;
         int percent = 0;
-        char[] bar = new char[(int)((Math.random()*75)+75)];
-        bar[0]='|'; bar[bar.length-1]='|';
-        for (int i = 1; i < bar.length-1; i++) {
-            bar[i]=' ';
+        char[] bar = new char[(int) ((Math.random() * 75) + 75)];
+        bar[0] = '|';
+        bar[bar.length - 1] = '|';
+        for (int i = 1; i < bar.length - 1; i++) {
+            bar[i] = ' ';
         }
-        for (int i = 1; i < bar.length-1; i++) {
-            percent=(int) (i*(100.0/(double)bar.length));
-            if(bar[i]==' ')
-                bar[i]='>';
+        for (int i = 1; i < bar.length - 1; i++) {
+            percent = (int) (i * (100.0 / (double) bar.length));
+            if (bar[i] == ' ')
+                bar[i] = '>';
             System.out.print(percent);
-            System.out.print(new String(bar)+"Loading UI asset: "+getNewSalt(""));
-             time= (long)((Math.random()*384)+1);
-          long start = System.currentTimeMillis();
-          while(start >= System.currentTimeMillis() - time); // do nothing
-          new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-          
+            System.out.print(new String(bar) + "Loading UI asset: " + getNewSalt(""));
+            time = (long) (((Math.random() * (512 / Runtime.getRuntime().availableProcessors()))) + 1);
+            long start = System.currentTimeMillis();
+            while (start >= System.currentTimeMillis() - time) ; // do nothing
+            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+
         }
 
     }
-    public static String getOs()
-    {
+
+    public static String getOs() {
         return System.getProperty("os.name");
     }
-    public static String getArchitecture()
-    {
+
+    public static String getArchitecture() {
         return System.getProperty("os.arch");
     }
-    public static String getOsName()
-    {
+
+    public static String getOsName() {
         String architecture = getArchitecture();
-        return getOs()+" "+architecture;
+        return getOs() + " " + architecture;
     }
+
     public static void getSystemInfo() {
         System.out.println("Available processors (cores): " +
                 Runtime.getRuntime().availableProcessors());
@@ -683,6 +670,7 @@ class Tools implements Runnable, KeyListener {
             System.out.println("Usable space (bytes): " + root.getUsableSpace());
         }
     }
+
     @Override
     public void run() {
         try {
@@ -946,6 +934,7 @@ class TestException extends Exception {
         super(s);
     }
 }
+
 class AssetGetFailException extends Exception {
     public AssetGetFailException(String s) {
         // Call constructor of parent Exception
