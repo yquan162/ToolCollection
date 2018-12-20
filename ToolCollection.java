@@ -1,14 +1,8 @@
-import java.util.Scanner;
 import java.io.File;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ArrayList;
 import java.security.MessageDigest;
-import java.util.InputMismatchException;
 import java.io.IOException;
-import java.util.NoSuchElementException;
 import java.lang.StackOverflowError;
 import java.math.BigInteger;
 import java.util.concurrent.TimeUnit;
@@ -43,12 +37,12 @@ public class ToolCollection {
 class Tools implements Runnable, KeyListener {
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()`~-_=+[{]};:',./<>?\"|";
     private static final String HEX_STRING = "0123456789abcdef";
-    public static String[] stopwords = {"exit", "Exit", "break", "Break", "stop", "Stop", "end", "End", "terminate", "Terminate"};
-    public static String[] helpwords = {"help", "Help", "functions", "Functions"};
-    public static String[] errorwords = {"debughash", "help", "functions", "exit", "break", "stop", "end", "terminate", "gethexstring", "systeminfo", "getos", "getpath", "leetify", "getrandomstring", "checktoken", "mineblock", "throwexception", "getrandomhash", "getepoch", "dec2hex", "bin2dec", "bin2hex", "clear", "hex2dec", "Clear", "dec2bin", "hex2bin", "directhash", "secretfunctions", "gpugrlc", "cpugrlc", "getstate", "setfalse", "bibbafy", "discordbibbafy", "base2dec", "base2hex", "base2bin", "base2base", "dec2base", "hex2base", "bin2base", "getcredits"};
-    public static boolean stop = false;
-    public static String placeholder = System.getProperty("user.dir");
-    public static String path = placeholder.replaceAll("/", "\\");
+    private static final String[] stopwords = {"exit", "Exit", "break", "Break", "stop", "Stop", "end", "End", "terminate", "Terminate"};
+    private static final String[] helpwords = {"help", "Help", "functions", "Functions"};
+    private static final String[] errorwords = {"debughash", "help", "functions", "exit", "break", "stop", "end", "terminate", "gethexstring", "systeminfo", "getos", "getpath", "leetify", "getrandomstring", "checktoken", "mineblock", "throwexception", "getrandomhash", "getepoch", "dec2hex", "bin2dec", "bin2hex", "clear", "hex2dec", "Clear", "dec2bin", "hex2bin", "directhash", "secretfunctions", "gpugrlc", "cpugrlc", "getstate", "setfalse", "bibbafy", "discordbibbafy", "base2dec", "base2hex", "base2bin", "base2base", "dec2base", "hex2base", "bin2base", "getcredits"};
+    private static boolean stop = false;
+    private static final String placeholder = System.getProperty("user.dir");
+    private static final String path = placeholder.replaceAll("/", "\\");
     private static String salt;
     private static String salt2;
     private static String hash1;
@@ -58,18 +52,18 @@ class Tools implements Runnable, KeyListener {
     private static boolean lbl = false;
     private static boolean clearall = false;
     private static int zeros = 0;
-    private static CommieAI ai = new CommieAI();
+    private static final CommieAI ai = new CommieAI();
 
     public Tools() {
     }
 
-    public static void hashInit() {
+    private static void hashInit() {
         salt2 = salt2 + sha256(randomAlphaNumeric(64));
         salt2 = sha256(salt2);
         salt2 = salt2.substring(0, 15);
     }
 
-    public static void debugInit() {
+    private static void debugInit() {
         String randomalp = randomAlphaNumeric(64);
         System.out.println("init rand: " + randomalp);
         salt2 = salt2 + sha256(randomalp);
@@ -80,12 +74,11 @@ class Tools implements Runnable, KeyListener {
         System.out.println("Generated Salt: " + salt2);
     }
 
-    public static void Execute() throws Exception {
+    private static void Execute() throws Exception {
         int x = -1;
         int y = -1;
         while (true) {
-            x = -1;
-            while (x == -1 && y == -1) {
+            while (true) {
                 Scanner sc = new Scanner(System.in);
                 String action = sc.nextLine();
                 action = action.toLowerCase();
@@ -102,15 +95,11 @@ class Tools implements Runnable, KeyListener {
                     if (!clearall)
                         ASCIIDL.ASCII("YTool v0.1", false);
                 } else if (action.contains("getrandomhash")) {
-                    if (!(action.equals(null))) {
-                        salt2 = salt2 + action;
-                    }
+                    salt2 = salt2 + action;
                     hashInit();
                     System.out.println(getHash());
                 } else if (action.contains("debughash")) {
-                    if (!(action.equals(null))) {
-                        salt2 = salt2 + action;
-                    }
+                    salt2 = salt2 + action;
                     System.out.println("init:" + salt2);
                     debugInit();
                     System.out.println(getDebugHash());
@@ -154,14 +143,14 @@ class Tools implements Runnable, KeyListener {
                     String bin2base = sc.nextLine();
                     int base = sc.nextInt();
                     System.out.println(literalHash.bin2base(bin2base, base));
-                } else if (action.contains("gpugrlc") && gpugrlc == true) {
+                } else if (action.contains("gpugrlc") && gpugrlc) {
                     literalHash.gpugrlc();
                     gpugrlc = false;
-                    if (gpugrlc == false)
+                    if (!gpugrlc)
                         System.out.println("this.state=0");
                     else
                         System.out.println("this.state=1");
-                    if (cpugrlc == false)
+                    if (!cpugrlc)
                         System.out.println("cpu.state=0");
                     else
                         System.out.println("cpu.state=1");
@@ -172,23 +161,23 @@ class Tools implements Runnable, KeyListener {
                 } else if (action.contains("discordbibbafy")) {
                     String discordbibbafy = sc.nextLine();
                     System.out.println(literalHash.discordbibbafy(discordbibbafy));
-                } else if (action.contains("cpugrlc") && cpugrlc == true) {
+                } else if (action.contains("cpugrlc") && cpugrlc) {
                     literalHash.cpugrlc();
                     cpugrlc = false;
-                    if (gpugrlc == false)
+                    if (!gpugrlc)
                         System.out.println("gpu.state=0");
                     else
                         System.out.println("gpu.state=1");
-                    if (cpugrlc == false)
+                    if (!cpugrlc)
                         System.out.println("this.state=0");
                     else
                         System.out.println("this.state=1");
                 } else if (action.contains("getstate")) {
-                    if (gpugrlc == false)
+                    if (!gpugrlc)
                         System.out.println("gpu.state=0");
                     else
                         System.out.println("gpu.state=1");
-                    if (cpugrlc == false)
+                    if (!cpugrlc)
                         System.out.println("cpu.state=0");
                     else
                         System.out.println("cpu.state=1");
@@ -329,7 +318,7 @@ class Tools implements Runnable, KeyListener {
         }
     }
 
-    public static String randomAlphaNumeric(int count) {
+    private static String randomAlphaNumeric(int count) {
         StringBuilder builder = new StringBuilder();
         while (count-- != 0) {
             int character = (int) (Math.random() * ALPHA_NUMERIC_STRING.length());
@@ -338,7 +327,7 @@ class Tools implements Runnable, KeyListener {
         return builder.toString();
     }
 
-    public static String randomHex(int count) {
+    private static String randomHex(int count) {
         StringBuilder builder = new StringBuilder();
         while (count-- != 0) {
             int character = (int) (Math.random() * HEX_STRING.length());
@@ -401,11 +390,11 @@ class Tools implements Runnable, KeyListener {
         return finalHash;
     }
 
-    public static String getBase() {
+    private static String getBase() {
         return randomAlphaNumeric(64);
     }
 
-    public static boolean isProcessed(String check) {
+    private static boolean isProcessed(String check) {
         if (check.length() != 64 && check.length() != 128)
             return false;
         Scanner scanner = new Scanner("processedtx.txt");
@@ -423,7 +412,7 @@ class Tools implements Runnable, KeyListener {
         return false;
     }
 
-    public static void mineBlock() throws InterruptedException, IOException, AssetGetFailException {
+    private static void mineBlock() throws InterruptedException, IOException, AssetGetFailException {
         String zero = "0000000000000000000000000000000000000000000000000000000000000000";
         String target;
         DecimalFormat df = new DecimalFormat("#.###");
@@ -571,7 +560,7 @@ class Tools implements Runnable, KeyListener {
 
     }
 
-    public static boolean checkToken() {
+    private static boolean checkToken() {
         System.out.println("<hash(String)><diff(int)><target(String)><time(double)><token(String)>");
         Scanner sc = new Scanner(System.in);
         String validHash = sc.nextLine();
@@ -593,12 +582,12 @@ class Tools implements Runnable, KeyListener {
             System.out.println("Invalid target given diff");
             return false;
         }
-        if (isProcessed(validHash) == true || isProcessed(token) == true) {
+        if (isProcessed(validHash) || isProcessed(token)) {
             System.out.println("already processed");
             return true;
         }
 
-        if (!(isProcessed(validHash) == true || isProcessed(token) == true) && token.equals(sha256(target).substring(0, 33) + sha256(validHash.substring(0, 33) + sha256(diff + "") + sha256(time + "") + validHash.substring(33)) + sha256(target).substring(33))) {
+        if (!(isProcessed(validHash) || isProcessed(token)) && token.equals(sha256(target).substring(0, 33) + sha256(validHash.substring(0, 33) + sha256(diff + "") + sha256(time + "") + validHash.substring(33)) + sha256(target).substring(33))) {
             try (BufferedWriter bw1 = new BufferedWriter(new FileWriter(path + "\\processedtx.txt", true))) {
                 bw1.write(validHash + " " + token);
                 bw1.newLine();
@@ -610,7 +599,7 @@ class Tools implements Runnable, KeyListener {
         return false;
     }
 
-    public static void loadingBar() throws Exception {
+    private static void loadingBar() throws Exception {
         long time;
         int percent = 0;
         char[] bar = new char[(int) ((Math.random() * 75) + 75)];
@@ -634,20 +623,20 @@ class Tools implements Runnable, KeyListener {
 
     }
 
-    public static String getOs() {
+    private static String getOs() {
         return System.getProperty("os.name");
     }
 
-    public static String getArchitecture() {
+    private static String getArchitecture() {
         return System.getProperty("os.arch");
     }
 
-    public static String getOsName() {
+    private static String getOsName() {
         String architecture = getArchitecture();
         return getOs() + " " + architecture;
     }
 
-    public static void getSystemInfo() {
+    private static void getSystemInfo() {
         System.out.println("Available processors (cores): " +
                 Runtime.getRuntime().availableProcessors());
 
@@ -688,8 +677,6 @@ class Tools implements Runnable, KeyListener {
             s = true;
         else if (e.getKeyCode() == KeyEvent.VK_CONTROL)
             ctrl = true;
-        if (s && ctrl)
-            stop = true;
 
     }
 
@@ -702,12 +689,10 @@ class Tools implements Runnable, KeyListener {
 }
 
 class literalHash {
-    final public static String list = "GHIJKLMNOPQRSTUVWXYZghijklmnopqrstuvwxyz!@#$%^&*()`~-_=+[{]};:',./<>?\"|";
-    final public static String binchar = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()`~-_=+[{]};:',./<>?\"|";
-    public static char[] chararray = list.toCharArray();
-    public static List<Character> nonAcceptableHex = new ArrayList<Character>();
-    public static List<Character> nonAcceptableBin = new ArrayList<Character>();
-    public static String bin = "";
+    private final static String list = "GHIJKLMNOPQRSTUVWXYZghijklmnopqrstuvwxyz!@#$%^&*()`~-_=+[{]};:',./<>?\"|";
+    private static final char[] chararray = list.toCharArray();
+    private static final List<Character> nonAcceptableHex = new ArrayList<Character>();
+    private static String bin = "";
 
     public static String hash(String base) {
         return Tools.sha256(base);
@@ -903,7 +888,7 @@ class literalHash {
 
 class Recovery {
 
-    final Object lock = new Object();
+    private final Object lock = new Object();
 
     void runAndRecover(final Runnable runnable) { // Will pass an instance of Tools
         while (true) {
@@ -943,29 +928,12 @@ class AssetGetFailException extends Exception {
 }
 
 class MethodsDL {
-    static final String author = "Damian Lall, edited by Yicheng Quan";
-    static final double version = 1.8D;
 
     public static void main(String[] args) {
         System.out.println();
     }
 
-    public static void Info() {
-        System.out.println("Author: Damian Lall, Contributor: Yicheng Quan");
-        Delay(250);
-        System.out.println("Version: 1.8");
-        Delay(250);
-        System.out.println("Subclasses: deprecated(MathDL), ASCIIDL");
-    }
-
-    public static void Commands() {
-        System.out.println("Info(): Provides general information regarding the MethodsDL class.");
-        System.out.println("Commands(): Provides a list of MethodsDL commands and their uses.");
-        System.out.println("Delay(int delayTime): Delays the program for the specified number of milliseconds.");
-        System.out.println("Random(int min, int max): Generates a random number between the min and max.");
-    }
-
-    public static void Delay(int delayTime) {
+    static void Delay(int delayTime) {
         try {
             TimeUnit.MILLISECONDS.sleep(delayTime);
         } catch (InterruptedException ex) {
@@ -973,49 +941,6 @@ class MethodsDL {
         }
     }
 
-    public static void Load(String load) {
-        Load(load, 200);
-    }
-
-    public static void Load(String load, int speed) {
-        System.out.print(load);
-        Delay(speed);
-        System.out.print(".");
-        Delay(speed);
-        System.out.print(".");
-        Delay(speed);
-        System.out.println(".");
-        Delay(speed);
-    }
-
-    public static void SlowReveal(String reveal) {
-        SlowReveal(reveal, 20);
-    }
-
-    public static void SlowReveal(String reveal, int speed) {
-        char[] split = reveal.toCharArray();
-        for (char r : split) {
-            System.out.print(r);
-            Delay(speed);
-        }
-        System.out.println();
-    }
-
-    public static int Random(int min, int max) {
-        return (int) (Math.random() * (max - min + 1)) + min;
-    }
-
-    public static int ChooseRandom(int[] arr) {
-        return arr[Random(0, arr.length - 1)];
-    }
-
-    public static double ChooseRandom(double[] arr) {
-        return arr[Random(0, arr.length - 1)];
-    }
-
-    public static String ChooseRandom(String[] arr) {
-        return arr[Random(0, arr.length - 1)];
-    }
 }
 
 class ASCIIDL extends MethodsDL {
@@ -1025,22 +950,6 @@ class ASCIIDL extends MethodsDL {
     private static String level4 = "";
     private static String level5 = "";
     private static String level6 = "";
-
-    public static void Info() {
-        System.out.println("Author: Damian Lall");
-        Delay(250);
-        System.out.println("Version: 1.7");
-        Delay(250);
-        System.out.println("Main Class: MethodsDL");
-        Delay(250);
-        System.out.println("Other Classes: MathDL");
-    }
-
-    public static void Commands() {
-        System.out.println("Info(): Provides general information regarding the ASCIIDL class.");
-        System.out.println("Commands(): Provides a list of ASCIIDL commands and their uses.");
-        System.out.println("ASCII(String text, boolean slow): Displays the inputted text as large ASCII-based characters.");
-    }
 
     public static void ASCII(String text, boolean slow) {
         char[] textArray = text.toUpperCase().toCharArray();
@@ -1235,7 +1144,7 @@ class ASCIIDL extends MethodsDL {
                 case '[':
                 case ']':
                 default:
-                    System.out.println("Error - Invalid Charachter");
+                    System.out.println("Error - Invalid Character");
             }
         }
         if (level1.length() > 79) {
@@ -1802,8 +1711,6 @@ class ASCIIDL extends MethodsDL {
 }
 
 class CommieAI {
-    static boolean first = true;
-    static int ct = 0;
 
     public void listen(String secretlistener) {
         if (secretlistener.length() < 5)
